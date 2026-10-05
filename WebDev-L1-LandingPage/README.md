@@ -12,7 +12,7 @@
 
 ## 📖 Overview
 
-**Mephisto** represents a paradigm shift in human-machine symbiosis. This landing page is engineered to reflect that ethos: dark cybernetic aesthetics, glassmorphic HUD interfaces, neon glow gradients, and fluid typography.
+**Mephisto** represents a paradigm shift in human-machine symbiosis. This landing page is engineered to reflect an ultra-premium, warm, earthy, and light aesthetic using an architectural luxury color palette: **Ivory** base (`#F5E6C5`), **Apricot** accents & CTAs (`#D78B30`), **Natural** borders & secondary elements (`#9F886F`), and high-contrast **Organic** dark typography (`#3F422E`).
 
 The site is built adhering strictly to the constraint of **NO JavaScript** — all interactive features (smooth scrolling, sticky header blur, diagnostic waveform visualizer, card hover effects, and a mobile hamburger drawer navigation) are powered purely by native CSS3 techniques.
 
@@ -24,12 +24,12 @@ The site is built adhering strictly to the constraint of **NO JavaScript** — a
 | :--- | :--- | :---: |
 | **Sticky Navigation Bar** | Sticky header with blur backdrop filter (`backdrop-filter: blur(16px)`), brand logo glyph, 4 distinct navigation links (`Features`, `Specs`, `Reviews`, `Pricing`), and a highlighted CTA button. | ✅ |
 | **Hero Section** | High-impact headline, subheadline, dual action buttons (`Secure Your Unit` & `View Technical Specs`), operational telemetry metrics, and a pure CSS diagnostic terminal HUD. | ✅ |
-| **Content Section 1: Capabilities** | 6-card CSS Grid showcasing quantum features with neon hover borders, custom SVGs, and category pills. | ✅ |
+| **Content Section 1: Capabilities** | 6-card CSS Grid showcasing quantum features with warm Apricot hover borders, custom SVGs, and category pills. | ✅ |
 | **Content Section 2: Hardware Architecture** | Responsive technical specification comparison matrix between Mephisto and legacy superclusters. | ✅ |
 | **Content Section 3: Verified Reviews** | Social proof grid featuring testimonials from verified deep tech researchers with avatar badges and star ratings. | ✅ |
 | **Content Section 4: Deployment Tiers** | 3-tier pricing matrix with an elevated "Most Requested" sovereign tier and tier comparison lists. | ✅ |
 | **Footer** | Comprehensive 4-column layout including company overview, navigation links, documentation directory, physical lab coordinates, email, and social media channels. | ✅ |
-| **Consistent Color Palette** | Obsidian-black foundations (`#050608`), cyber cyan (`#00f0ff`), deep violet (`#8a2be2`), and clean slate typography. | ✅ |
+| **Consistent Color Palette** | Ivory base (`#F5E6C5`), Apricot accents (`#D78B30`), Natural borders (`#9F886F`), and Organic typography (`#3F422E`). | ✅ |
 | **Responsive Layout** | 100% fluid Flexbox and CSS Grid architecture with breakpoints for desktops (1200px), tablets (1024px, 768px), and mobile devices (480px). | ✅ |
 | **Zero Element Overlap** | Universal `box-sizing: border-box`, clean padding and margin distribution, and proper z-index layering. | ✅ |
 | **Clean Typography** | Dual Google Fonts hierarchy (`Space Grotesk` for headlines, `Inter` for body copy, and `JetBrains Mono` for telemetry and code). | ✅ |
@@ -52,18 +52,18 @@ The site is built adhering strictly to the constraint of **NO JavaScript** — a
 
 ---
 
-## 🎨 Design System & Palette
+## 🎨 Design System & Luxury Palette
 
-| Variable Name | Hex Code | Purpose |
+| Token / Variable Name | Value / Hex Code | Purpose |
 | :--- | :--- | :--- |
-| `--bg-deep` | `#050608` | Canvas & root background |
-| `--bg-primary` | `#08090e` | Alternate section background |
-| `--bg-card` | `rgba(18, 22, 34, 0.7)` | Glassmorphic surface cards |
-| `--cyan-primary` | `#00f0ff` | Neon brand accent & highlights |
-| `--purple-primary` | `#8a2be2` | Secondary gradient complement |
-| `--text-main` | `#f8fafc` | Primary headings & high-contrast text |
-| `--text-secondary` | `#94a3b8` | Body and description paragraphs |
-| `--border-light` | `rgba(255, 255, 255, 0.08)` | Subtle card and divider borders |
+| `--color-ivory` / `--bg-deep` | `#F5E6C5` | Base canvas and main body background (Ivory) |
+| `--color-apricot` / `--accent-primary` | `#D78B30` | Primary CTA buttons, badges, highlights & active states (Apricot) |
+| `--color-natural` / `--text-dim` | `#9F886F` | Secondary labels, borders, dividers, and accents (Natural) |
+| `--color-organic` / `--text-main` | `#3F422E` | High-contrast primary headings, dark elements & body text (Organic) |
+| `--bg-secondary` | `#EFE0BD` | Warm alternate section background |
+| `--bg-card` | `rgba(255, 253, 248, 0.85)` | Warm luxury elevated card surfaces |
+| `--border-light` | `rgba(159, 136, 111, 0.28)` | Natural refined component borders |
+| `--shadow-md` | `rgba(63, 66, 46, 0.08)` | Soft, elegant, and natural drop shadows |
 
 ---
 
