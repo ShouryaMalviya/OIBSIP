@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mephisto — The next-generation autonomous neural interface and quantum computing terminal. Experience zero-latency synthetic cognition and post-quantum encryption.">
+  <meta name="keywords" content="Mephisto, neural interface, quantum terminal, synthetic intelligence, hardware, future tech">
+  <meta name="author" content="Mephisto Dynamics Corp.">
+  <title>MEPHISTO — The Quantum Neural Interface</title>
+
+  <!-- Google Fonts: Space Grotesk & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glow & Cyber Grid -->
+  <div class="ambient-glow glow-top" aria-hidden="true"></div>
+  <div class="ambient-glow glow-bottom" aria-hidden="true"></div>
+  <div class="cyber-grid" aria-hidden="true"></div>
+
+  <!-- ========================================================
+       NAVIGATION BAR (Sticky, CSS-only Responsive Nav)
+       ======================================================== -->
+  <header class="navbar" id="top-nav">
+    <div class="nav-container">
+      <!-- Brand Logo -->
+      <a href="#hero" class="brand-logo" aria-label="Mephisto Home">
+        <span class="logo-symbol">
+          <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="16,2 30,10 30,22 16,30 2,22 2,10" stroke="url(#logo-grad)" stroke-width="2.5" fill="none"/>
+            <circle cx="16" cy="16" r="5" fill="url(#logo-grad)"/>
+            <defs>
+              <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f0ff"/>
+                <stop offset="100%" stop-color="#8a2be2"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="logo-text">MEPHISTO<span class="logo-dot">.</span></span>
+      </a>
+
+      <!-- CSS-Only Hamburger Checkbox Toggle (Strictly No JS) -->
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation menu">
+      <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <!-- Navigation Links -->
+      <nav class="nav-menu" aria-label="Primary Navigation">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#features" class="nav-link">Features</a></li>
+          <li class="nav-item"><a href="#specs" class="nav-link">Specs</a></li>
+          <li class="nav-item"><a href="#reviews" class="nav-link">Reviews</a></li>
+          <li class="nav-item"><a href="#pricing" class="nav-link">Pricing</a></li>
+        </ul>
+        <div class="nav-cta-wrapper">
+          <a href="#pricing" class="btn btn-nav">Pre-Order Now</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       HERO SECTION
+       ======================================================== -->
+  <main id="main-content">
+    <section class="hero-section" id="hero">
+      <div class="container hero-container">
+        
+        <!-- Hero Left / Content -->
+        <div class="hero-content">
+          <div class="badge-pill">
+            <span class="badge-dot"></span>
+            <span class="badge-text">GEN-IV NEURAL COMPUTE // PUBLIC ANNOUNCEMENT</span>
+          </div>
+
+          <h1 class="hero-title">
+            Transcending <br>
+            <span class="gradient-text">Human Cognition.</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Mephisto is the world’s first autonomous quantum-neural interface. Engineered with sub-kelvin coprocessing, zero-latency bio-synaptic synchronization, and unbreakable post-quantum cryptography.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#pricing" class="btn btn-primary">
+              <span>Secure Your Unit</span>
+              <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </a>
+            <a href="#specs" class="btn btn-secondary">
+              <span>View Technical Specs</span>
+            </a>
+          </div>
+
+          <!-- Quick Metrics Banner -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-value">0.12<span class="stat-unit">ms</span></span>
+              <span class="stat-label">Neural Synapse Latency</span>
+            </div>
+            <div class="stat-divider" aria-hidden="true"></div>
+            <div class="stat-item">
+              <span class="stat-value">99.99<span class="stat-unit">%</span></span>
+              <span class="stat-label">Quantum Coherence</span>
+            </div>
+            <div class="stat-divider" aria-hidden="true"></div>
+            <div class="stat-item">
+              <span class="stat-value">128<span class="stat-unit">Qubit</span></span>
+              <span class="stat-label">Pure Tensor Array</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Right / Futuristic Pure CSS Mockup -->
+        <div class="hero-visual">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="t-dot dot-red"></span>
+                <span class="t-dot dot-yellow"></span>
+                <span class="t-dot dot-green"></span>
+              </div>
+              <span class="terminal-title">MEPHISTO_OS // v4.2.0-STABLE</span>
+              <span class="terminal-status">LIVE SYNC</span>
+            </div>
+            
+            <div class="terminal-body">
+              <div class="code-line"><span class="c-dim">01</span> <span class="c-cyan">&gt; INITIALIZING_CORE:</span> <span class="c-purple">Mephisto.Tensor(128_Q)</span></div>
+              <div class="code-line"><span class="c-dim">02</span> <span class="c-dim">// Synchronizing synaptic bridge...</span></div>
+              <div class="code-line"><span class="c-dim">03</span> <span class="c-cyan">&gt; SYNC_STATE:</span> <span class="c-green">LOCKED [0.12ms]</span></div>
+              <div class="code-line"><span class="c-dim">04</span> <span class="c-cyan">&gt; ENTANGLEMENT_ENTROPY:</span> <span class="c-white">0.000432 e.u.</span></div>
+              <div class="code-line"><span class="c-dim">05</span> <span class="c-cyan">&gt; SENTINEL_DEFENSE:</span> <span class="c-purple">POST-QUANTUM_ACTIVE</span></div>
+              
+              <!-- Simulated Waveform Visual (Pure CSS) -->
+              <div class="waveform-container">
+                <span class="waveform-bar bar-1"></span>
+                <span class="waveform-bar bar-2"></span>
+                <span class="waveform-bar bar-3"></span>
+                <span class="waveform-bar bar-4"></span>
+                <span class="waveform-bar bar-5"></span>
+                <span class="waveform-bar bar-6"></span>
+                <span class="waveform-bar bar-7"></span>
+                <span class="waveform-bar bar-8"></span>
+                <span class="waveform-bar bar-9"></span>
+                <span class="waveform-bar bar-10"></span>
+                <span class="waveform-bar bar-11"></span>
+                <span class="waveform-bar bar-12"></span>
+              </div>
+
+              <!-- HUD Metric Tiles -->
+              <div class="hud-grid">
+                <div class="hud-tile">
+                  <div class="hud-tile-title">CORE TEMP</div>
+                  <div class="hud-tile-val">0.015 K</div>
+                  <div class="hud-bar"><span class="hud-fill" style="width: 28%;"></span></div>
+                </div>
+                <div class="hud-tile">
+                  <div class="hud-tile-title">BANDWIDTH</div>
+                  <div class="hud-tile-val">4.8 TB/s</div>
+                  <div class="hud-bar"><span class="hud-fill" style="width: 94%;"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terminal Glow Ring -->
+            <div class="card-glow" aria-hidden="true"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 1: FEATURES & CAPABILITIES
+         ======================================================== -->
+    <section class="section" id="features">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-tag">CAPABILITIES</div>
+          <h2 class="section-title">Engineered Beyond the Silicon Horizon</h2>
+          <p class="section-description">
+            Conventional silicon processors have reached physical thermodynamics limits. Mephisto harnesses biomorphic quantum co-processing to rewrite computational physics.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          
+          <!-- Card 1 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                <circle cx="12" cy="12" r="4"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Zero-Point Synapse</h3>
+            <p class="feature-text">
+              Direct biocoupled telemetry delivers 0.12ms tactile feedback. Synthesize complex algorithms at the precise speed of organic human thought.
+            </p>
+            <div class="feature-badge">Ultra-Low Latency</div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Cryo-Sub-Kelvin Core</h3>
+            <p class="feature-text">
+              Self-contained closed-loop liquid helium refrigeration maintains 128 physical qubits in absolute ground state coherence indefinitely.
+            </p>
+            <div class="feature-badge">Zero Thermal Noise</div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Post-Quantum Cryptography</h3>
+            <p class="feature-text">
+              Lattice-based 4096-bit entanglement keys render your data impervious to Shor's algorithm, quantum decryption, and side-channel snooping.
+            </p>
+            <div class="feature-badge">Military Spec Grade</div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Volumetric Hologram HUD</h3>
+            <p class="feature-text">
+              Project multi-layered high-density tensor workspaces directly into physical 3D space without requiring heavy VR headsets or external lenses.
+            </p>
+            <div class="feature-badge">True 3D Spatial</div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Autonomous Sentinel OS</h3>
+            <p class="feature-text">
+              An on-die self-healing microkernel that automatically refactors runtime instructions, isolates memory anomalies, and predicts execution bottlenecks.
+            </p>
+            <div class="feature-badge">Zero-Downtime</div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="feature-card">
+            <div class="feature-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title">Dark-State Efficiency</h3>
+            <p class="feature-text">
+              Consumes only 38 Watts under peak non-linear tensor simulation. Engineered using monolithic graphene-substrate semiconductors.
+            </p>
+            <div class="feature-badge">Energy Efficient</div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 2: TECHNICAL SPECIFICATIONS (Specs Matrix)
+         ======================================================== -->
+    <section class="section section-alt" id="specs">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-tag">HARDWARE ARCHITECTURE</div>
+          <h2 class="section-title">Precision Down to the Femtometer</h2>
+          <p class="section-description">
+            Compare the technical specifications of Mephisto against conventional high-performance compute clusters.
+          </p>
+        </div>
+
+        <div class="specs-wrapper">
+          <div class="table-responsive">
+            <table class="specs-table">
+              <thead>
+                <tr>
+                  <th scope="col">Component Parameter</th>
+                  <th scope="col" class="highlight-col">Mephisto Flagship Terminal</th>
+                  <th scope="col">Legacy Supercluster Node</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="spec-name">Compute Substrate</td>
+                  <td class="highlight-col"><span class="badge-accent">128 Qubit Monolithic Ion Trap</span></td>
+                  <td>Conventional 4nm Silicon x86/ARM</td>
+                </tr>
+                <tr>
+                  <td class="spec-name">Synaptic Interface Latency</td>
+                  <td class="highlight-col font-mono text-cyan">0.12 ms (Direct Biocouple)</td>
+                  <td class="font-mono">42.50 ms (Fiber Optical)</td>
+                </tr>
+                <tr>
+                  <td class="spec-name">Operating Thermal Envelope</td>
+                  <td class="highlight-col font-mono text-cyan">15 mK (Integrated Solid-State Dilution)</td>
+                  <td class="font-mono">310 K (Industrial HVAC Chilled)</td>
+                </tr>
+                <tr>
+                  <td class="spec-name">Peak Energy Dissipation</td>
+                  <td class="highlight-col font-mono text-cyan">38 Watts</td>
+                  <td class="font-mono">2,400 Watts</td>
+                </tr>
+                <tr>
+                  <td class="spec-name">Cryptographic Resilience</td>
+                  <td class="highlight-col font-mono text-cyan">NIST PQC Round 4 (Kyber-1024)</td>
+                  <td class="font-mono">RSA-4096 / ECC-384 (Vulnerable)</td>
+                </tr>
+                <tr>
+                  <td class="spec-name">Chassis Construction</td>
+                  <td class="highlight-col">Grade-5 Forged Titanium &amp; Aerogel</td>
+                  <td>Stamped Sheet Aluminum</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="spec-callout">
+            <div class="callout-icon">💡</div>
+            <div class="callout-text">
+              <strong>Need custom enterprise cluster configuration?</strong> Our quantum engineering team provides bespoke multifold cryogenic racks for laboratory and industrial installations.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 3: TESTIMONIALS & REVIEWS
+         ======================================================== -->
+    <section class="section" id="reviews">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-tag">VERIFIED REVIEWS</div>
+          <h2 class="section-title">Endorsed by Pioneers in Deep Tech</h2>
+          <p class="section-description">
+            Leading researchers, synthetic intelligence founders, and cybernetic pioneers share their workflow revolutions with Mephisto.
+          </p>
+        </div>
+
+        <div class="reviews-grid">
+          
+          <!-- Testimonial 1 -->
+          <article class="review-card">
+            <div class="review-rating" aria-label="5 out of 5 stars">
+              ★★★★★
+            </div>
+            <p class="review-quote">
+              &ldquo;Mephisto replaced an entire 8-rack server cluster in our research facility. Running non-linear quantum simulations now takes 8 minutes instead of 3 weeks. It feels like software from the year 2045.&rdquo;
+            </p>
+            <div class="reviewer-meta">
+              <div class="reviewer-avatar avatar-1">
+                <span>DR</span>
+              </div>
+              <div class="reviewer-info">
+                <div class="reviewer-name">Dr. Elena Vance</div>
+                <div class="reviewer-role">Director of Quantum Systems, CERN</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Testimonial 2 -->
+          <article class="review-card featured-review">
+            <div class="review-badge">FEATURED RESEARCHER</div>
+            <div class="review-rating" aria-label="5 out of 5 stars">
+              ★★★★★
+            </div>
+            <p class="review-quote">
+              &ldquo;The zero-latency biocouple interface changes the psychological relationship between human and code. It is no longer typing; it is immediate, thought-driven architectural composition.&rdquo;
+            </p>
+            <div class="reviewer-meta">
+              <div class="reviewer-avatar avatar-2">
+                <span>KX</span>
+              </div>
+              <div class="reviewer-info">
+                <div class="reviewer-name">Kaelen Xiao</div>
+                <div class="reviewer-role">Chief AI Architect, NeuralStream Labs</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Testimonial 3 -->
+          <article class="review-card">
+            <div class="review-rating" aria-label="5 out of 5 stars">
+              ★★★★★
+            </div>
+            <p class="review-quote">
+              &ldquo;Post-quantum encryption wasn't optional for our aerospace security parameters. Mephisto provides ironclad cryptographic peace of mind and effortless cold-boot performance.&rdquo;
+            </p>
+            <div class="reviewer-meta">
+              <div class="reviewer-avatar avatar-3">
+                <span>SM</span>
+              </div>
+              <div class="reviewer-info">
+                <div class="reviewer-name">Soren Lindqvist</div>
+                <div class="reviewer-role">Head of Cybersecurity, Vesper Aerospace</div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SECTION 4: PRICING & CALL TO ACTION
+         ======================================================== -->
+    <section class="section section-alt" id="pricing">
+      <div class="container">
+        
+        <div class="section-header">
+          <div class="section-tag">DEPLOYMENT TIERS</div>
+          <h2 class="section-title">Claim Your Mephisto Node</h2>
+          <p class="section-description">
+            Production runs are strictly serialized. Reserve your allocation for Batch 04 delivery.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          
+          <!-- Pricing Card 1 -->
+          <div class="pricing-card">
+            <div class="pricing-tier">PIONEER EDITION</div>
+            <div class="pricing-cost">
+              <span class="currency">$</span>
+              <span class="amount">2,499</span>
+              <span class="period">/ unit</span>
+            </div>
+            <p class="pricing-summary">Designed for autonomous AI developers and high-frequency systems engineers.</p>
+            
+            <ul class="pricing-features">
+              <li><span class="check-icon">✓</span> 32-Qubit Emulated Tensor Core</li>
+              <li><span class="check-icon">✓</span> 0.40ms Neural Synapse Adapter</li>
+              <li><span class="check-icon">✓</span> Sentinel OS Developer License</li>
+              <li><span class="check-icon">✓</span> Post-Quantum Cryptographic Suite</li>
+              <li class="disabled"><span class="cross-icon">✕</span> Cryo Dilution Cooling Module</li>
+            </ul>
+
+            <a href="#contact" class="btn btn-outline full-width">Reserve Pioneer</a>
+          </div>
+
+          <!-- Pricing Card 2 (Featured) -->
+          <div class="pricing-card pricing-card-highlight">
+            <div class="highlight-pill">MOST REQUESTED</div>
+            <div class="pricing-tier">SOVEREIGN QUANTUM</div>
+            <div class="pricing-cost">
+              <span class="currency">$</span>
+              <span class="amount">6,999</span>
+              <span class="period">/ unit</span>
+            </div>
+            <p class="pricing-summary">The benchmark hardware configuration for institutional researchers &amp; labs.</p>
+            
+            <ul class="pricing-features">
+              <li><span class="check-icon">✓</span> <strong>128-Qubit Physical Ion Trap</strong></li>
+              <li><span class="check-icon">✓</span> <strong>0.12ms True Biocouple Link</strong></li>
+              <li><span class="check-icon">✓</span> Cryogenic Sub-Kelvin Internal Loop</li>
+              <li><span class="check-icon">✓</span> Full Volumetric 3D Holographic Array</li>
+              <li><span class="check-icon">✓</span> 24/7 Dedicated Quantum Support Line</li>
+            </ul>
+
+            <a href="#contact" class="btn btn-primary full-width">Reserve Sovereign</a>
+          </div>
+
+          <!-- Pricing Card 3 -->
+          <div class="pricing-card">
+            <div class="pricing-tier">ENTERPRISE CLUSTER</div>
+            <div class="pricing-cost">
+              <span class="amount">Custom</span>
+            </div>
+            <p class="pricing-summary">Multi-rack cryogenic infrastructure for aerospace, defense, and deep tech labs.</p>
+            
+            <ul class="pricing-features">
+              <li><span class="check-icon">✓</span> 1,024+ Entangled Coherent Qubits</li>
+              <li><span class="check-icon">✓</span> On-Site Cryogenic Plant Deployment</li>
+              <li><span class="check-icon">✓</span> Air-Gapped Sovereign Hardware Security</li>
+              <li><span class="check-icon">✓</span> Custom Firmware Tailoring</li>
+              <li><span class="check-icon">✓</span> On-Premise SLA &amp; Physics Support</li>
+            </ul>
+
+            <a href="#contact" class="btn btn-outline full-width">Contact Engineering</a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" id="contact">
+    <div class="container footer-container">
+      
+      <div class="footer-grid">
+        
+        <!-- Col 1: Brand Info -->
+        <div class="footer-col footer-col-brand">
+          <div class="brand-logo footer-logo">
+            <span class="logo-symbol">
+              <svg viewBox="0 0 32 32" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="16,2 30,10 30,22 16,30 2,22 2,10" stroke="url(#logo-grad-footer)" stroke-width="2" fill="none"/>
+                <circle cx="16" cy="16" r="4" fill="url(#logo-grad-footer)"/>
+                <defs>
+                  <linearGradient id="logo-grad-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00f0ff"/>
+                    <stop offset="100%" stop-color="#8a2be2"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </span>
+            <span class="logo-text">MEPHISTO<span class="logo-dot">.</span></span>
+          </div>
+          <p class="footer-tagline">
+            Pioneering the frontier of bio-computational physics and next-generation quantum human-machine interfaces.
+          </p>
+          <div class="system-status">
+            <span class="status-indicator"></span>
+            <span class="status-label">All Global Quantum Hubs Online</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Architecture</h4>
+          <ul class="footer-links">
+            <li><a href="#hero">Overview</a></li>
+            <li><a href="#features">Neural Synapse</a></li>
+            <li><a href="#specs">Specifications</a></li>
+            <li><a href="#reviews">Verified Research</a></li>
+            <li><a href="#pricing">Hardware Allocations</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Research & Legal -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Documentation</h4>
+          <ul class="footer-links">
+            <li><a href="#specs">Quantum Whitepaper</a></li>
+            <li><a href="#specs">Kyber-1024 Security Audit</a></li>
+            <li><a href="#specs">Sentinel Microkernel Source</a></li>
+            <li><a href="#contact">Compliance &amp; Export Controls</a></li>
+            <li><a href="#contact">Privacy Manifest</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Contact & Socials -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Global Headquarters</h4>
+          <div class="footer-contact-details">
+            <p><strong>R&amp;D Complex:</strong> 400 Quantum Way, Palo Alto, CA</p>
+            <p><strong>Cryo Facility:</strong> Shibuya Stream Tower, Tokyo, JP</p>
+            <p><strong>Direct Inquiries:</strong> <a href="mailto:contact@mephisto-dynamics.io" class="footer-mail">contact@mephisto-dynamics.io</a></p>
+            <p><strong>Secure Comms:</strong> PGP Key ID: 0x9B4E88F1</p>
+          </div>
+
+          <div class="social-links-wrapper">
+            <h5 class="social-heading">Follow The Project</h5>
+            <div class="social-icons">
+              <!-- X / Twitter -->
+              <a href="https://x.com" class="social-btn" aria-label="X / Twitter" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <!-- GitHub -->
+              <a href="https://github.com" class="social-btn" aria-label="GitHub" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                </svg>
+              </a>
+              <!-- Discord -->
+              <a href="https://discord.com" class="social-btn" aria-label="Discord" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+              </a>
+              <!-- LinkedIn -->
+              <a href="https://linkedin.com" class="social-btn" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Copyright Sub-Footer -->
+      <div class="footer-bottom">
+        <p>&copy; 2026 Mephisto Dynamics Corporation. All intellectual property &amp; quantum patents reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#hero">Privacy Policy</a>
+          <span class="sep">&bull;</span>
+          <a href="#hero">Terms of Service</a>
+          <span class="sep">&bull;</span>
+          <a href="#hero">Cryptographic Disclosure</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>
