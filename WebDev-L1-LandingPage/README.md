@@ -12,7 +12,7 @@
 
 ## 📖 Overview
 
-**Mephisto** represents a paradigm shift in human-machine symbiosis. This landing page is engineered to reflect an ultra-premium, warm, earthy, and light aesthetic using an architectural luxury color palette: **Ivory** base (`#F5E6C5`), **Apricot** accents & CTAs (`#D78B30`), **Natural** borders & secondary elements (`#9F886F`), and high-contrast **Organic** dark typography (`#3F422E`).
+**Mephisto** represents a paradigm shift in human-machine symbiosis. This landing page is engineered to reflect a sleek, icy, and moody dark aesthetic using a futuristic glassmorphic color palette: **Black Iris** main deep canvas (`#080813`), frosty **Frozen** blue accents, glowing borders & secondary text (`#A0BDDB`), and high-contrast **Crisp White** headings and primary text (`#F8FAFC`).
 
 The site is built adhering strictly to the constraint of **NO JavaScript** — all interactive features (smooth scrolling, sticky header blur, diagnostic waveform visualizer, card hover effects, and a mobile hamburger drawer navigation) are powered purely by native CSS3 techniques.
 
@@ -24,12 +24,12 @@ The site is built adhering strictly to the constraint of **NO JavaScript** — a
 | :--- | :--- | :---: |
 | **Sticky Navigation Bar** | Sticky header with blur backdrop filter (`backdrop-filter: blur(16px)`), brand logo glyph, 4 distinct navigation links (`Features`, `Specs`, `Reviews`, `Pricing`), and a highlighted CTA button. | ✅ |
 | **Hero Section** | High-impact headline, subheadline, dual action buttons (`Secure Your Unit` & `View Technical Specs`), operational telemetry metrics, and a pure CSS diagnostic terminal HUD. | ✅ |
-| **Content Section 1: Capabilities** | 6-card CSS Grid showcasing quantum features with warm Apricot hover borders, custom SVGs, and category pills. | ✅ |
+| **Content Section 1: Capabilities** | 6-card CSS Grid showcasing quantum features with Frozen blue hover borders, custom SVGs, and category pills. | ✅ |
 | **Content Section 2: Hardware Architecture** | Responsive technical specification comparison matrix between Mephisto and legacy superclusters. | ✅ |
 | **Content Section 3: Verified Reviews** | Social proof grid featuring testimonials from verified deep tech researchers with avatar badges and star ratings. | ✅ |
 | **Content Section 4: Deployment Tiers** | 3-tier pricing matrix with an elevated "Most Requested" sovereign tier and tier comparison lists. | ✅ |
 | **Footer** | Comprehensive 4-column layout including company overview, navigation links, documentation directory, physical lab coordinates, email, and social media channels. | ✅ |
-| **Consistent Color Palette** | Ivory base (`#F5E6C5`), Apricot accents (`#D78B30`), Natural borders (`#9F886F`), and Organic typography (`#3F422E`). | ✅ |
+| **Consistent Color Palette** | Black Iris deep foundation (`#080813`), Frozen accents & borders (`#A0BDDB`), and Crisp White typography (`#F8FAFC`). | ✅ |
 | **Responsive Layout** | 100% fluid Flexbox and CSS Grid architecture with breakpoints for desktops (1200px), tablets (1024px, 768px), and mobile devices (480px). | ✅ |
 | **Zero Element Overlap** | Universal `box-sizing: border-box`, clean padding and margin distribution, and proper z-index layering. | ✅ |
 | **Clean Typography** | Dual Google Fonts hierarchy (`Space Grotesk` for headlines, `Inter` for body copy, and `JetBrains Mono` for telemetry and code). | ✅ |
@@ -52,18 +52,18 @@ The site is built adhering strictly to the constraint of **NO JavaScript** — a
 
 ---
 
-## 🎨 Design System & Luxury Palette
+## 🎨 Design System & Color Palette
 
 | Token / Variable Name | Value / Hex Code | Purpose |
 | :--- | :--- | :--- |
-| `--color-ivory` / `--bg-deep` | `#F5E6C5` | Base canvas and main body background (Ivory) |
-| `--color-apricot` / `--accent-primary` | `#D78B30` | Primary CTA buttons, badges, highlights & active states (Apricot) |
-| `--color-natural` / `--text-dim` | `#9F886F` | Secondary labels, borders, dividers, and accents (Natural) |
-| `--color-organic` / `--text-main` | `#3F422E` | High-contrast primary headings, dark elements & body text (Organic) |
-| `--bg-secondary` | `#EFE0BD` | Warm alternate section background |
-| `--bg-card` | `rgba(255, 253, 248, 0.85)` | Warm luxury elevated card surfaces |
-| `--border-light` | `rgba(159, 136, 111, 0.28)` | Natural refined component borders |
-| `--shadow-md` | `rgba(63, 66, 46, 0.08)` | Soft, elegant, and natural drop shadows |
+| `--color-black-iris` / `--bg-deep` | `#080813` | Deep midnight canvas & main background (Black Iris) |
+| `--color-frozen` / `--accent-primary` | `#A0BDDB` | Primary CTA buttons, subtle borders, glowing accents & highlights (Frozen) |
+| `--color-white` / `--text-main` | `#F8FAFC` | High-contrast main headings & primary text (Crisp White) |
+| `--text-secondary` | `#A0BDDB` | Body copy, secondary text & subheadings (Frozen) |
+| `--bg-secondary` | `#0c0d1e` | Alternate section background |
+| `--bg-card` | `rgba(16, 18, 36, 0.65)` | Glassmorphic surface cards with blur |
+| `--border-light` | `rgba(160, 189, 219, 0.14)` | Subtle icy component borders |
+| `--shadow-neon` | `rgba(160, 189, 219, 0.35)` | Frosty atmospheric blue glows and button shadows |
 
 ---
 
