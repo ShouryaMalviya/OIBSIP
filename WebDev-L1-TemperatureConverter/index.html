@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A clean, responsive Temperature Converter to instantly convert temperatures between Celsius (°C), Fahrenheit (°F), and Kelvin (K) with real-time validation.">
+  <title>Temperature Converter</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <main class="converter-card" id="main-content">
+      <!-- Header Section -->
+      <header class="app-header">
+        <div class="header-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path>
+          </svg>
+        </div>
+        <h1 class="app-title">Temperature Converter</h1>
+        <p class="app-description">
+          Convert temperature values seamlessly across Celsius, Fahrenheit, and Kelvin with instant precision.
+        </p>
+      </header>
+
+      <!-- Conversion Form -->
+      <form id="converter-form" class="converter-form" novalidate>
+        <div class="form-grid">
+          <!-- Temperature Input -->
+          <div class="input-group">
+            <label for="temperature-input" class="form-label">
+              Temperature Value <span class="required" aria-hidden="true">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input 
+                type="text" 
+                id="temperature-input" 
+                name="temperature"
+                class="form-input" 
+                inputmode="decimal" 
+                placeholder="e.g. 25, -10, 36.5" 
+                aria-describedby="error-message"
+                autocomplete="off"
+                required
+              >
+              <button 
+                type="button" 
+                id="quick-clear-btn" 
+                class="quick-clear-btn" 
+                aria-label="Clear input value" 
+                hidden
+              >
+                &times;
+              </button>
+            </div>
+          </div>
+
+          <!-- Unit Selection Dropdown -->
+          <div class="input-group">
+            <label for="unit-select" class="form-label">Input Unit</label>
+            <div class="select-wrapper">
+              <select id="unit-select" name="unit" class="form-select">
+                <option value="celsius" selected>Celsius (°C)</option>
+                <option value="fahrenheit">Fahrenheit (°F)</option>
+                <option value="kelvin">Kelvin (K)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message Area -->
+        <div 
+          id="error-message" 
+          class="error-message" 
+          role="alert" 
+          aria-live="polite" 
+          hidden
+        ></div>
+
+        <!-- Form Action Buttons -->
+        <div class="button-group">
+          <button type="submit" id="convert-btn" class="btn btn-primary">
+            <span class="btn-icon" aria-hidden="true">⇄</span>
+            <span>Convert</span>
+          </button>
+          <button type="button" id="reset-btn" class="btn btn-secondary">
+            <span class="btn-icon" aria-hidden="true">↺</span>
+            <span>Clear</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Results Section -->
+      <section id="results-section" class="results-section" aria-label="Conversion Results">
+        <h2 class="section-title">Converted Results</h2>
+
+        <!-- Initial Placeholder Message -->
+        <div id="results-placeholder" class="results-placeholder">
+          <p class="placeholder-text">Enter a temperature to begin.</p>
+        </div>
+
+        <!-- Result Cards Container -->
+        <div id="cards-grid" class="cards-grid">
+          <!-- Celsius Card -->
+          <article class="result-card" id="card-celsius" data-unit="celsius">
+            <div class="card-header">
+              <span class="unit-badge">Metric</span>
+              <h3 class="card-title">Celsius</h3>
+            </div>
+            <div class="card-body">
+              <span class="temperature-value" id="celsius-result">--</span>
+              <span class="temperature-unit">°C</span>
+            </div>
+            <p class="card-footer-text">Degrees Celsius</p>
+          </article>
+
+          <!-- Fahrenheit Card -->
+          <article class="result-card" id="card-fahrenheit" data-unit="fahrenheit">
+            <div class="card-header">
+              <span class="unit-badge">Imperial</span>
+              <h3 class="card-title">Fahrenheit</h3>
+            </div>
+            <div class="card-body">
+              <span class="temperature-value" id="fahrenheit-result">--</span>
+              <span class="temperature-unit">°F</span>
+            </div>
+            <p class="card-footer-text">Degrees Fahrenheit</p>
+          </article>
+
+          <!-- Kelvin Card -->
+          <article class="result-card" id="card-kelvin" data-unit="kelvin">
+            <div class="card-header">
+              <span class="unit-badge">Absolute</span>
+              <h3 class="card-title">Kelvin</h3>
+            </div>
+            <div class="card-body">
+              <span class="temperature-value" id="kelvin-result">--</span>
+              <span class="temperature-unit">K</span>
+            </div>
+            <p class="card-footer-text">Kelvin scale</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Footer Section -->
+      <footer class="app-footer">
+        <p>Temperature Converter — Built with HTML5, CSS3, and Vanilla JavaScript.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
