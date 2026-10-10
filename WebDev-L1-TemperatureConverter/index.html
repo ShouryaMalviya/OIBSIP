@@ -18,14 +18,18 @@
       <!-- Header Section -->
       <header class="app-header">
         <div class="header-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="url(#thermometer-gradient)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+              <linearGradient id="thermometer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="100%" stop-color="#a78bfa" />
+              </linearGradient>
+            </defs>
             <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path>
           </svg>
         </div>
         <h1 class="app-title">Temperature Converter</h1>
-        <p class="app-description">
-          Convert temperature values seamlessly across Celsius, Fahrenheit, and Kelvin with instant precision.
-        </p>
+        <p class="app-description">Convert temperatures with accuracy and ease.</p>
       </header>
 
       <!-- Conversion Form -->
