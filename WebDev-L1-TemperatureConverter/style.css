@@ -297,6 +297,12 @@ body {
   box-shadow: 0 0 0 4px var(--error-glow);
 }
 
+.form-input[aria-invalid="true"]:focus,
+.form-input.is-invalid:focus {
+  border-color: #f43f5e;
+  box-shadow: 0 0 0 4px var(--error-glow), 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
 /* In-field Quick Clear Button */
 .quick-clear-btn {
   position: absolute;
