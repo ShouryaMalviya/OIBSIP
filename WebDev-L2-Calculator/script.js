@@ -509,7 +509,7 @@ class Calculator {
     this.errorMessage.textContent = msg;
     this.displayError.hidden = false;
     this.indicatorStatus.textContent = 'ERROR';
-    this.indicatorStatus.style.color = '#ef4444';
+    this.indicatorStatus.style.color = 'var(--maroon)';
   }
 
   /**
@@ -518,7 +518,7 @@ class Calculator {
   hideError() {
     this.displayError.hidden = true;
     this.indicatorStatus.textContent = 'READY';
-    this.indicatorStatus.style.color = '#38bdf8';
+    this.indicatorStatus.style.color = 'var(--deep-teal)';
   }
 
   /**
