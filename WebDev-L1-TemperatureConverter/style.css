@@ -9,67 +9,67 @@
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  /* Theme Canvas — Deep Navy & Charcoal Base */
-  --bg-dark-base: #0a0e17;
-  --bg-gradient: radial-gradient(circle at 50% 0%, #151d33 0%, #0c111e 50%, #070a12 100%);
+  /* Theme Canvas — Luxury Warm Parchment */
+  --bg-dark-base: #FEF4D5;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #fef8e4 0%, #FEF4D5 50%, #f8ecbf 100%);
 
   /* Card Surface */
-  --card-bg: linear-gradient(160deg, rgba(23, 31, 51, 0.85) 0%, rgba(13, 18, 32, 0.9) 100%);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-border-top: rgba(255, 255, 255, 0.16);
-  --card-shadow: 
-    0 24px 60px -12px rgba(0, 0, 0, 0.65),
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 0 80px -20px rgba(56, 189, 248, 0.12);
+  --card-bg: linear-gradient(160deg, rgba(255, 250, 230, 0.92) 0%, rgba(254, 244, 213, 0.96) 100%);
+  --card-border: rgba(44, 24, 16, 0.1);
+  --card-border-top: rgba(44, 24, 16, 0.18);
+  --card-shadow:
+    0 24px 60px -12px rgba(44, 24, 16, 0.15),
+    0 0 0 1px rgba(44, 24, 16, 0.06),
+    0 0 80px -20px rgba(230, 209, 123, 0.2);
 
   /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #2C1810;
+  --text-secondary: #5C3D2E;
+  --text-muted: #8B6B5A;
 
-  /* Accent Color Palette (Blue, Cyan, Violet) */
-  --accent-cyan: #06b6d4;
-  --accent-cyan-light: #38bdf8;
-  --accent-blue: #3b82f6;
-  --accent-violet: #8b5cf6;
-  --accent-violet-light: #a78bfa;
+  /* Accent Color Palette (Gold, Ochre, Warm Bronze) */
+  --accent-cyan: #E6D17B;
+  --accent-cyan-light: #F1E49A;
+  --accent-blue: #D4B85A;
+  --accent-violet: #C9A84C;
+  --accent-violet-light: #E6D17B;
 
-  /* Primary Button Gradient (Cyan -> Blue -> Violet) */
-  --btn-primary-gradient: linear-gradient(135deg, #0284c7 0%, #3b82f6 50%, #7c3aed 100%);
-  --btn-primary-hover: linear-gradient(135deg, #0369a1 0%, #2563eb 50%, #6d28d9 100%);
-  --btn-primary-shadow: 0 4px 20px -2px rgba(59, 130, 246, 0.45);
-  --btn-primary-shadow-hover: 0 8px 26px -2px rgba(59, 130, 246, 0.6);
+  /* Primary Button Gradient (Gold -> Ochre -> Deep Gold) */
+  --btn-primary-gradient: linear-gradient(135deg, #F1E49A 0%, #E6D17B 50%, #D4B85A 100%);
+  --btn-primary-hover: linear-gradient(135deg, #E6D17B 0%, #D4B85A 50%, #C9A84C 100%);
+  --btn-primary-shadow: 0 4px 20px -2px rgba(230, 209, 123, 0.45);
+  --btn-primary-shadow-hover: 0 8px 26px -2px rgba(230, 209, 123, 0.6);
 
   /* Secondary Button */
-  --btn-secondary-bg: rgba(255, 255, 255, 0.05);
-  --btn-secondary-border: rgba(255, 255, 255, 0.12);
-  --btn-secondary-hover-bg: rgba(255, 255, 255, 0.1);
-  --btn-secondary-hover-border: rgba(255, 255, 255, 0.24);
+  --btn-secondary-bg: rgba(44, 24, 16, 0.06);
+  --btn-secondary-border: rgba(44, 24, 16, 0.15);
+  --btn-secondary-hover-bg: rgba(44, 24, 16, 0.1);
+  --btn-secondary-hover-border: rgba(44, 24, 16, 0.25);
 
   /* Form Controls */
-  --input-bg: rgba(15, 23, 42, 0.65);
-  --input-border: rgba(148, 163, 184, 0.2);
-  --input-focus-border: #38bdf8;
-  --input-focus-glow: rgba(56, 189, 248, 0.22);
+  --input-bg: rgba(255, 250, 235, 0.7);
+  --input-border: rgba(44, 24, 16, 0.18);
+  --input-focus-border: #D4B85A;
+  --input-focus-glow: rgba(230, 209, 123, 0.3);
 
-  /* Card Color Accents */
-  --unit-celsius-color: #38bdf8;
-  --unit-celsius-border: rgba(56, 189, 248, 0.25);
-  --unit-celsius-bg: rgba(56, 189, 248, 0.05);
+  /* Card Color Accents — Warm Tonal Variants */
+  --unit-celsius-color: #B8860B;
+  --unit-celsius-border: rgba(184, 134, 11, 0.3);
+  --unit-celsius-bg: rgba(241, 228, 154, 0.15);
 
-  --unit-fahrenheit-color: #fb923c;
-  --unit-fahrenheit-border: rgba(251, 146, 60, 0.25);
-  --unit-fahrenheit-bg: rgba(251, 146, 60, 0.05);
+  --unit-fahrenheit-color: #A0522D;
+  --unit-fahrenheit-border: rgba(160, 82, 45, 0.3);
+  --unit-fahrenheit-bg: rgba(160, 82, 45, 0.08);
 
-  --unit-kelvin-color: #a78bfa;
-  --unit-kelvin-border: rgba(167, 139, 250, 0.25);
-  --unit-kelvin-bg: rgba(167, 139, 250, 0.05);
+  --unit-kelvin-color: #8B6914;
+  --unit-kelvin-border: rgba(139, 105, 20, 0.3);
+  --unit-kelvin-bg: rgba(139, 105, 20, 0.08);
 
   /* Validation & Error */
-  --error-bg: rgba(244, 63, 94, 0.12);
-  --error-border: rgba(244, 63, 94, 0.35);
-  --error-text: #fda4af;
-  --error-glow: rgba(244, 63, 94, 0.25);
+  --error-bg: rgba(180, 50, 50, 0.08);
+  --error-border: rgba(180, 50, 50, 0.3);
+  --error-text: #9B2C2C;
+  --error-glow: rgba(180, 50, 50, 0.15);
 
   /* Geometry & Timing */
   --radius-sm: 8px;
@@ -131,7 +131,7 @@ body {
   transform: translateX(-50%);
   width: 380px;
   height: 240px;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(139, 92, 246, 0.1) 60%, transparent 80%);
+  background: radial-gradient(circle, rgba(241, 228, 154, 0.3) 0%, rgba(230, 209, 123, 0.15) 60%, transparent 80%);
   filter: blur(50px);
   pointer-events: none;
   z-index: 0;
@@ -165,36 +165,36 @@ body {
   width: 62px;
   height: 62px;
   margin: 0 auto 1.15rem;
-  background: linear-gradient(145deg, rgba(6, 182, 212, 0.18) 0%, rgba(139, 92, 246, 0.18) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: linear-gradient(145deg, rgba(241, 228, 154, 0.35) 0%, rgba(230, 209, 123, 0.3) 100%);
+  border: 1px solid rgba(212, 184, 90, 0.45);
   border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent-cyan-light);
-  box-shadow: 
-    0 10px 24px -4px rgba(6, 182, 212, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: #D4B85A;
+  box-shadow:
+    0 10px 24px -4px rgba(230, 209, 123, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .header-icon:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 14px 28px -4px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 14px 28px -4px rgba(230, 209, 123, 0.4);
 }
 
 .header-icon svg {
   display: block;
-  stroke: var(--accent-cyan-light);
+  stroke: #D4B85A;
   stroke: url(#thermometer-gradient);
-  filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.4));
+  filter: drop-shadow(0 2px 8px rgba(212, 184, 90, 0.4));
 }
 
 .app-title {
   font-size: 1.85rem;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #ffffff;
+  color: #2C1810;
   margin-bottom: 0.45rem;
   line-height: 1.25;
 }
@@ -238,7 +238,7 @@ body {
 }
 
 .required {
-  color: #f43f5e;
+  color: #9B2C2C;
   font-weight: 700;
 }
 
@@ -263,7 +263,7 @@ body {
   border: 1.5px solid var(--input-border);
   border-radius: var(--radius-md);
   outline: none;
-  transition: 
+  transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     background-color var(--transition-fast);
@@ -277,37 +277,37 @@ body {
 /* Interactive States: Hover & Focus */
 .form-input:hover,
 .form-select:hover {
-  border-color: rgba(148, 163, 184, 0.4);
+  border-color: rgba(44, 24, 16, 0.3);
 }
 
 .form-input:focus,
 .form-select:focus {
   border-color: var(--input-focus-border);
-  background: rgba(15, 23, 42, 0.85);
-  box-shadow: 
+  background: rgba(255, 252, 240, 0.9);
+  box-shadow:
     0 0 0 4px var(--input-focus-glow),
-    0 4px 16px rgba(0, 0, 0, 0.25);
+    0 4px 16px rgba(44, 24, 16, 0.08);
 }
 
 /* Invalid Input Indication */
 .form-input[aria-invalid="true"],
 .form-input.is-invalid {
-  border-color: #f43f5e;
-  background: rgba(244, 63, 94, 0.04);
+  border-color: #9B2C2C;
+  background: rgba(180, 50, 50, 0.04);
   box-shadow: 0 0 0 4px var(--error-glow);
 }
 
 .form-input[aria-invalid="true"]:focus,
 .form-input.is-invalid:focus {
-  border-color: #f43f5e;
-  box-shadow: 0 0 0 4px var(--error-glow), 0 4px 16px rgba(0, 0, 0, 0.25);
+  border-color: #9B2C2C;
+  box-shadow: 0 0 0 4px var(--error-glow), 0 4px 16px rgba(44, 24, 16, 0.08);
 }
 
 /* In-field Quick Clear Button */
 .quick-clear-btn {
   position: absolute;
   right: 0.85rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(44, 24, 16, 0.08);
   border: none;
   color: var(--text-secondary);
   font-size: 1.15rem;
@@ -323,7 +323,7 @@ body {
 }
 
 .quick-clear-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(44, 24, 16, 0.15);
   color: var(--text-primary);
 }
 
@@ -337,7 +337,7 @@ body {
 }
 
 .form-select option {
-  background-color: #0d1220;
+  background-color: #FEF4D5;
   color: var(--text-primary);
   padding: 0.5rem;
 }
@@ -380,7 +380,7 @@ body {
 .error-message::before {
   content: "⚠";
   font-size: 1rem;
-  color: #fb7185;
+  color: #9B2C2C;
 }
 
 @keyframes slideFadeShake {
@@ -415,7 +415,7 @@ body {
   cursor: pointer;
   user-select: none;
   letter-spacing: 0.01em;
-  transition: 
+  transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
     background var(--transition-fast),
@@ -426,9 +426,9 @@ body {
 /* Convert Button — Primary Action */
 .btn-primary {
   background: var(--btn-primary-gradient);
-  color: #ffffff;
+  color: #2C1810;
   box-shadow: var(--btn-primary-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(212, 184, 90, 0.4);
 }
 
 .btn-primary:hover {
@@ -438,7 +438,7 @@ body {
 }
 
 .btn-primary:focus-visible {
-  outline: 2px solid var(--accent-cyan-light);
+  outline: 2px solid #D4B85A;
   outline-offset: 3px;
 }
 
@@ -470,7 +470,7 @@ body {
 
 .btn-secondary:active {
   transform: translateY(0);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(44, 24, 16, 0.04);
 }
 
 .btn-icon {
@@ -482,7 +482,7 @@ body {
    8. Results Section & Cards
    -------------------------------------------------------------------------- */
 .results-section {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(44, 24, 16, 0.1);
   padding-top: 1.85rem;
 }
 
@@ -498,8 +498,8 @@ body {
 .results-placeholder {
   text-align: center;
   padding: 1.5rem 1rem;
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(241, 228, 154, 0.15);
+  border: 1px dashed rgba(44, 24, 16, 0.15);
   border-radius: var(--radius-md);
   margin-bottom: 1.25rem;
   transition: opacity var(--transition-fast);
@@ -521,8 +521,8 @@ body {
 /* Single Result Card */
 .result-card {
   position: relative;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 252, 240, 0.6);
+  border: 1px solid rgba(44, 24, 16, 0.08);
   border-radius: var(--radius-md);
   padding: 1.25rem 1.1rem;
   display: flex;
@@ -530,7 +530,7 @@ body {
   justify-content: space-between;
   min-height: 148px;
   overflow: hidden;
-  transition: 
+  transition:
     transform var(--transition-normal),
     border-color var(--transition-normal),
     box-shadow var(--transition-normal),
@@ -553,33 +553,33 @@ body {
   opacity: 0.85;
 }
 
-/* Celsius Card Theme (Cyan) */
+/* Celsius Card Theme (Dark Gold) */
 .result-card#card-celsius {
   color: var(--unit-celsius-color);
 }
 .result-card#card-celsius:hover {
   border-color: var(--unit-celsius-border);
-  box-shadow: 0 10px 24px -6px rgba(56, 189, 248, 0.18);
+  box-shadow: 0 10px 24px -6px rgba(184, 134, 11, 0.2);
   background: var(--unit-celsius-bg);
 }
 
-/* Fahrenheit Card Theme (Amber / Orange) */
+/* Fahrenheit Card Theme (Sienna / Warm Brown) */
 .result-card#card-fahrenheit {
   color: var(--unit-fahrenheit-color);
 }
 .result-card#card-fahrenheit:hover {
   border-color: var(--unit-fahrenheit-border);
-  box-shadow: 0 10px 24px -6px rgba(251, 146, 60, 0.18);
+  box-shadow: 0 10px 24px -6px rgba(160, 82, 45, 0.2);
   background: var(--unit-fahrenheit-bg);
 }
 
-/* Kelvin Card Theme (Violet) */
+/* Kelvin Card Theme (Deep Ochre) */
 .result-card#card-kelvin {
   color: var(--unit-kelvin-color);
 }
 .result-card#card-kelvin:hover {
   border-color: var(--unit-kelvin-border);
-  box-shadow: 0 10px 24px -6px rgba(167, 139, 250, 0.18);
+  box-shadow: 0 10px 24px -6px rgba(139, 105, 20, 0.2);
   background: var(--unit-kelvin-bg);
 }
 
@@ -603,8 +603,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-weight: 700;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(44, 24, 16, 0.06);
+  border: 1px solid rgba(44, 24, 16, 0.1);
   padding: 0.2rem 0.5rem;
   border-radius: var(--radius-full);
   color: var(--text-muted);
@@ -644,7 +644,7 @@ body {
 .app-footer {
   margin-top: 2.25rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(44, 24, 16, 0.08);
   text-align: center;
 }
 
