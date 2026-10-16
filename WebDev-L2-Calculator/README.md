@@ -9,62 +9,64 @@ A precision-engineered, browser-based calculator built with **HTML5, CSS3, and V
 WebDev-L2-Calculator/
 ├── index.html        # Semantic HTML5 document structure & accessibility
 ├── style.css         # Artisanal CSS3 design system & bespoke color tokens
-├── script.js         # Vanilla JavaScript calculation logic, audio & state
+├── script.js         # Custom Shunting-Yard calculation engine & state
 └── README.md         # Comprehensive project documentation
 ```
 
 ---
 
-## Part 3: Calculator Interface & Core Functionality
+## Part 4: Calculation Engine, Operator Handling & Error Management
 
-### 1. Display System
-- **Dual Display Architecture**:
-  - **Primary Screen (`#display-primary`)**: Displays active numeric input as typed, live updates, and final evaluated results upon pressing equals.
-  - **Secondary Expression Track (`#display-expression`)**: Shows the ongoing mathematical equation and completed formula with trailing `=` after calculation.
-  - **Live Sub-Result Preview (`#display-preview`)**: Instant dynamic evaluation preview displayed in real-time as operands and operators are entered.
-- **Overflow & Long Expression Resilience**:
-  - Horizontal auto-scrolling (`scrollLeft = scrollWidth`) ensures newly entered digits remain continuously in view without breaking the layout.
-  - Clean floating-point precision formatting resolves IEEE 754 micro-rounding issues (e.g., `0.1 + 0.2 = 0.3`).
+### 1. Safe Arithmetic Evaluation (Zero `eval`, Zero `Function`)
+- **Strict Prohibition Adherence**: Completely eliminates JavaScript's `eval()` and the `Function()` constructor for security and stability.
+- **Architectural Design**:
+  1. **Lexical Tokenizer (`tokenize`)**: Scans input and parses numbers, decimal segments, algebraic operators (`+`, `−`, `×`, `÷`, `^`, `%`), parentheses, unary negatives (`neg`), and scientific functions (`sin`, `cos`, `tan`, `log`, `ln`, `sqrt`).
+  2. **Dijkstra's Shunting-Yard Algorithm (`shuntingYard`)**: Converts the infix token stream into Reverse Polish Notation (RPN / Postfix).
+  3. **Stack-Based RPN Evaluator (`evaluateRPN`)**: Evaluates the postfix stream with boundary checks and division-by-zero detection.
 
-### 2. Numeric Input & Decimal Rules
-- **Digits Supported**: `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, and `00`.
-- **Decimal Point (`.`)**:
-  - Prevents duplicate decimal points within any active numerical segment.
-  - Automatically prefixes leading zeros for expressions starting with a decimal point (e.g., `.5` becomes `0.5`).
-  - Supports decimals immediately following operators (e.g., `12 + .` evaluates cleanly as `12 + 0.`).
-- **Zero & Negative Number Handling**:
-  - Eliminates unintended leading zeros (e.g., entering `5` when display is `0` replaces the zero with `5`).
-  - Standalone `0` after operators (e.g., `12 + 0`) is replaced when subsequent digits are typed.
-  - Dedicated sign toggle (`±`) supports negative numbers and sub-expression operand inversion.
+### 2. Precedence Convention (BODMAS / PEMDAS)
+The calculator strictly follows **Standard Algebraic Mathematical Precedence**:
+- **Parentheses**: `( ... )` take highest precedence.
+- **Exponents**: `^` evaluated next (right-associative).
+- **Multiplication & Division**: `×`, `÷`, `%` evaluated before addition/subtraction (left-associative).
+- **Addition & Subtraction**: `+`, `−` evaluated last (left-associative).
 
-### 3. Arithmetic Operators & Chaining
-- **Operators**: Addition (`+`), Subtraction (`−`), Multiplication (`×`), and Division (`÷`).
-- **Operator Replacement**: Repeated operator clicks dynamically replace the preceding operator (e.g., `12 + ` followed by `×` smoothly transitions to `12 × `).
-- **Chained Calculations**: Direct chaining from evaluated results (e.g., `5 + 3 = 8` followed by `× 2` continues seamlessly from `8 × 2 = 16`).
+**Examples**:
+- `5 + 3 =` → `8`
+- `10 - 4 =` → `6`
+- `6 × 7 =` → `42`
+- `20 ÷ 4 =` → `5`
+- `5 + 3 × 2 =` → `11` (BODMAS: `3 × 2 = 6`, `5 + 6 = 11`)
+- `(5 + 3) × 2 =` → `16`
 
-### 4. Control Buttons
-- **Clear (C / AC)**:
-  - Dynamically displays `C` while an operation is in progress and `AC` when in initial state.
-  - Completely resets the current calculation, expression tracks, and error notices.
-- **Backspace (⌫)**:
-  - Deletes characters one by one with clean fallback to `0` when empty.
-  - Safely deletes entire multi-character operators with surrounding spaces (` + `), function prefixes, and decimals without leaving the calculator in an inconsistent state.
-- **Equals (=)**:
-  - Safely evaluates expressions using isolated evaluation.
-  - Detects division by zero (e.g., `8 ÷ 0`) and gracefully alerts `"Cannot divide by zero"` without crashing or outputting `Infinity`.
-  - Automatically records completed equations in the slide-out calculation history log.
+### 3. Division-by-Zero & Error Protection
+- **Pre-Execution Check**: Explicit zero divisor check (`Math.abs(b) < 1e-15`) triggers immediately without crashing the interface or outputting `Infinity`.
+- **Friendly Error Feedback**: Inset error alert displays `"Cannot divide by zero"`.
+- **Seamless Recovery**: The calculator remains interactive. Typing any digit or clicking `C` automatically resets the error state.
 
-### 5. Event Handling & Keyboard Shortcuts
-- Bound exclusively through `addEventListener()` (zero inline HTML event attributes).
-- Event delegation on `.calculator-keypad` for performant, predictable interaction.
-- **Hardware Keyboard Mapping**:
-  - `0`–`9` & `.` for numbers and decimals.
-  - `+`, `-`, `*`, `/` for operators.
-  - `Enter` or `=` for equals.
-  - `Backspace` for delete.
-  - `Escape`, `c`, `C` for clear.
-  - `(` and `)` for parentheses.
-  - Active button visual feedback (`.btn-active`) mirrors physical keypresses on screen.
+### 4. Comprehensive Edge Case Handling
+| Edge Case | Behavior & Resolution |
+| :--- | :--- |
+| **Incomplete Expression (e.g. `5 + =`)** | Caught safely, displaying `"Incomplete expression"` without crashing. |
+| **Repeated Operators (e.g. `5 + × ÷ − 3`)** | Automatically replaces trailing operators with the latest operator (`5 − 3 = 2`). |
+| **Multiple Decimals (e.g. `3.14.5`)** | Prevents subsequent decimal points within the same active numerical token. |
+| **Leading Decimals (e.g. `.5`)** | Automatically normalized as `0.5`. |
+| **Negative Operations (e.g. `-10 ÷ 2`)** | Evaluates correctly as `-5`. |
+| **Subtracting Larger from Smaller (e.g. `5 − 12`)** | Evaluates correctly as `-7`. |
+| **Excessive Decimal Precision (e.g. `0.1 + 0.2`)** | Formatted to 12 significant figures, eliminating IEEE 754 micro-rounding residues (`0.3`). |
+| **Extreme Numbers** | Formatted into clean scientific notation (e.g., `1.5e+15`). |
+| **Backspace on Empty Input** | Gracefully retains `0` without breaking internal state. |
+| **Chaining from Evaluated Result** | Pressing an operator after `=` chains the result (`8 + 2 = 10`, `× 5 = 50`). |
+| **Fresh Calculation after Equals** | Typing a digit immediately starts a new calculation. |
+
+### 5. Physical Keyboard Navigation
+- Numeric input: `0`–`9` and `.`.
+- Operators: `+`, `-`, `*`, `/` (mapped to `+`, `−`, `×`, `÷`).
+- Evaluation: `Enter` or `=`.
+- Backspace: `Backspace` deletes characters safely.
+- Clear: `Escape`, `c`, or `C`.
+- `e.preventDefault()` prevents browser shortcuts (e.g., Firefox quick-find `/` or page refresh).
+- Visual depression feedback (`.btn-active`) animates keys when typed via keyboard.
 
 ---
 
@@ -81,9 +83,9 @@ WebDev-L2-Calculator/
 ```
 
 ### Contrast & Accessibility (WCAG AAA)
-- **Deep Teal on Cream**: ~12:1 contrast ratio (exceeds WCAG AAA).
-- **Cream / White on Maroon**: ~13:1 contrast ratio (exceeds WCAG AAA).
-- **Deep Teal on Taupe**: ~7.4:1 contrast ratio (meets WCAG AAA).
+- **Deep Teal on Cream**: ~12:1 contrast ratio.
+- **Cream / White on Maroon**: ~13:1 contrast ratio.
+- **Deep Teal on Taupe**: ~7.4:1 contrast ratio.
 - **Focus Rings**: `:focus-visible` with 2px high-contrast outlines for accessible keyboard navigation.
 
 ---

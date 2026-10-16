@@ -1,35 +1,375 @@
 /**
  * AuraCalc — Architectural Precision Calculator
- * PART 3: Calculator Interface & Core Functionality
- * Pure Vanilla JavaScript (ES6+)
+ * PART 4: Calculation Engine, Operator Handling & Error Management
+ * Pure Vanilla JavaScript (ES6+) — Safe Tokenizer & Shunting-Yard Engine
  */
 
 'use strict';
 
+/**
+ * ============================================================================
+ * Safe Calculation Engine
+ * Implements: Tokenizer -> Dijkstra's Shunting-Yard Algorithm -> RPN Evaluator
+ * Precedence Convention: Standard Algebraic Precedence (BODMAS / PEMDAS)
+ * 100% Safe: Custom AST Parser architecture without shortcuts.
+ * ============================================================================
+ */
+class CalculationEngine {
+  constructor(options = {}) {
+    this.isAngleDegree = options.isAngleDegree ?? true;
+  }
+
+  setAngleDegree(isDeg) {
+    this.isAngleDegree = isDeg;
+  }
+
+  /**
+   * Tokenize an expression string into structured mathematical tokens
+   */
+  tokenize(expr) {
+    if (!expr || typeof expr !== 'string') return [];
+
+    const tokens = [];
+    let i = 0;
+    const len = expr.length;
+
+    while (i < len) {
+      const ch = expr[i];
+
+      // Skip whitespace
+      if (/\s/.test(ch)) {
+        i++;
+        continue;
+      }
+
+      // 1. Numbers (integers, floating point decimals)
+      if (/[0-9]/.test(ch) || (ch === '.' && i + 1 < len && /[0-9]/.test(expr[i + 1]))) {
+        let numStr = '';
+        while (i < len && (/[0-9]/.test(expr[i]) || expr[i] === '.')) {
+          numStr += expr[i];
+          i++;
+        }
+        tokens.push({ type: 'NUMBER', value: parseFloat(numStr) });
+        continue;
+      }
+
+      // 2. Named functions and constants (sin, cos, tan, log, ln, sqrt, pi, e)
+      if (/[a-zA-Z]/.test(ch)) {
+        let name = '';
+        while (i < len && /[a-zA-Z]/.test(expr[i])) {
+          name += expr[i];
+          i++;
+        }
+        const lower = name.toLowerCase();
+        if (lower === 'pi') {
+          tokens.push({ type: 'NUMBER', value: Math.PI });
+        } else if (lower === 'e') {
+          tokens.push({ type: 'NUMBER', value: Math.E });
+        } else if (['sin', 'cos', 'tan', 'log', 'ln', 'sqrt'].includes(lower)) {
+          tokens.push({ type: 'FUNCTION', value: lower });
+        } else {
+          throw new Error(`Unknown token: ${name}`);
+        }
+        continue;
+      }
+
+      // 3. Special Constant Symbols
+      if (ch === 'π') {
+        tokens.push({ type: 'NUMBER', value: Math.PI });
+        i++;
+        continue;
+      }
+
+      // 4. Parentheses
+      if (ch === '(') {
+        tokens.push({ type: 'LPAREN', value: '(' });
+        i++;
+        continue;
+      }
+      if (ch === ')') {
+        tokens.push({ type: 'RPAREN', value: ')' });
+        i++;
+        continue;
+      }
+
+      // 5. Binary & Unary Arithmetic Operators
+      const isOp = ['+', '−', '-', '×', '*', '÷', '/', '^', '%'].includes(ch);
+      if (isOp) {
+        let opVal = ch;
+        if (ch === '−') opVal = '-';
+        if (ch === '×') opVal = '*';
+        if (ch === '÷') opVal = '/';
+
+        // Check if '-' denotes unary negation rather than binary subtraction
+        const prev = tokens[tokens.length - 1];
+        if (opVal === '-' && (!prev || prev.type === 'OPERATOR' || prev.type === 'LPAREN')) {
+          tokens.push({ type: 'UNARY_NEG', value: 'neg' });
+        } else {
+          tokens.push({ type: 'OPERATOR', value: opVal });
+        }
+        i++;
+        continue;
+      }
+
+      throw new Error(`Unrecognized symbol: ${ch}`);
+    }
+
+    return tokens;
+  }
+
+  /**
+   * Shunting-Yard Algorithm (Dijkstra)
+   * Converts Infix token stream to Reverse Polish Notation (RPN / Postfix)
+   * Enforces BODMAS / PEMDAS precedence:
+   * ^ (4) > * / % (3) > + - (2)
+   */
+  shuntingYard(tokens) {
+    const outputQueue = [];
+    const opStack = [];
+
+    const precedence = {
+      '+': 2,
+      '-': 2,
+      '*': 3,
+      '/': 3,
+      '%': 3,
+      '^': 4,
+      'neg': 5
+    };
+
+    const isRightAssociative = (op) => op === '^' || op === 'neg';
+
+    for (const token of tokens) {
+      if (token.type === 'NUMBER') {
+        outputQueue.push(token);
+      } else if (token.type === 'FUNCTION') {
+        opStack.push(token);
+      } else if (token.type === 'OPERATOR' || token.type === 'UNARY_NEG') {
+        const op1 = token.value;
+        const prec1 = precedence[op1];
+
+        while (opStack.length > 0) {
+          const top = opStack[opStack.length - 1];
+          if (top.type === 'OPERATOR' || top.type === 'UNARY_NEG') {
+            const op2 = top.value;
+            const prec2 = precedence[op2];
+            if (
+              (isRightAssociative(op1) && prec1 < prec2) ||
+              (!isRightAssociative(op1) && prec1 <= prec2)
+            ) {
+              outputQueue.push(opStack.pop());
+            } else {
+              break;
+            }
+          } else if (top.type === 'FUNCTION') {
+            outputQueue.push(opStack.pop());
+          } else {
+            break;
+          }
+        }
+        opStack.push(token);
+      } else if (token.type === 'LPAREN') {
+        opStack.push(token);
+      } else if (token.type === 'RPAREN') {
+        let foundLParen = false;
+        while (opStack.length > 0) {
+          const top = opStack.pop();
+          if (top.type === 'LPAREN') {
+            foundLParen = true;
+            break;
+          } else {
+            outputQueue.push(top);
+          }
+        }
+        if (!foundLParen) {
+          throw new Error('Mismatched parentheses');
+        }
+        if (opStack.length > 0 && opStack[opStack.length - 1].type === 'FUNCTION') {
+          outputQueue.push(opStack.pop());
+        }
+      }
+    }
+
+    while (opStack.length > 0) {
+      const top = opStack.pop();
+      if (top.type === 'LPAREN' || top.type === 'RPAREN') {
+        throw new Error('Mismatched parentheses');
+      }
+      outputQueue.push(top);
+    }
+
+    return outputQueue;
+  }
+
+  /**
+   * Evaluate Postfix (RPN) Token Queue
+   * Implements strict division-by-zero protection and boundary validation
+   */
+  evaluateRPN(rpnQueue) {
+    const valStack = [];
+
+    for (const token of rpnQueue) {
+      if (token.type === 'NUMBER') {
+        valStack.push(token.value);
+      } else if (token.type === 'UNARY_NEG') {
+        if (valStack.length < 1) throw new Error('Invalid negation syntax');
+        const val = valStack.pop();
+        valStack.push(-val);
+      } else if (token.type === 'OPERATOR') {
+        if (valStack.length < 2) throw new Error('Incomplete expression');
+        const b = valStack.pop();
+        const a = valStack.pop();
+        let res = 0;
+
+        switch (token.value) {
+          case '+':
+            res = a + b;
+            break;
+          case '-':
+            res = a - b;
+            break;
+          case '*':
+            res = a * b;
+            break;
+          case '/':
+            // Division-by-Zero Check
+            if (Math.abs(b) < 1e-15) {
+              throw new Error('Cannot divide by zero');
+            }
+            res = a / b;
+            break;
+          case '%':
+            if (Math.abs(b) < 1e-15) {
+              throw new Error('Cannot divide by zero');
+            }
+            res = a % b;
+            break;
+          case '^':
+            res = Math.pow(a, b);
+            break;
+          default:
+            throw new Error(`Unknown operator: ${token.value}`);
+        }
+
+        if (!isFinite(res) || isNaN(res)) {
+          throw new Error('Invalid numerical result');
+        }
+
+        valStack.push(res);
+      } else if (token.type === 'FUNCTION') {
+        if (valStack.length < 1) throw new Error('Missing function parameter');
+        const a = valStack.pop();
+        let res = 0;
+
+        switch (token.value) {
+          case 'sin': {
+            let angle = a;
+            if (this.isAngleDegree) angle = (angle * Math.PI) / 180;
+            res = Math.sin(angle);
+            break;
+          }
+          case 'cos': {
+            let angle = a;
+            if (this.isAngleDegree) angle = (angle * Math.PI) / 180;
+            res = Math.cos(angle);
+            break;
+          }
+          case 'tan': {
+            let angle = a;
+            if (this.isAngleDegree) angle = (angle * Math.PI) / 180;
+            // Catch 90 deg asymptotic singularity
+            if (this.isAngleDegree && Math.abs(a % 180) === 90) {
+              throw new Error('Tangent undefined at 90°');
+            }
+            res = Math.tan(angle);
+            break;
+          }
+          case 'log':
+            if (a <= 0) throw new Error('Cannot calculate logarithm of non-positive number');
+            res = Math.log10(a);
+            break;
+          case 'ln':
+            if (a <= 0) throw new Error('Cannot calculate natural logarithm of non-positive number');
+            res = Math.log(a);
+            break;
+          case 'sqrt':
+            if (a < 0) throw new Error('Cannot calculate square root of negative number');
+            res = Math.sqrt(a);
+            break;
+          default:
+            throw new Error(`Unknown function: ${token.value}`);
+        }
+
+        if (!isFinite(res) || isNaN(res)) {
+          throw new Error('Invalid numerical result');
+        }
+
+        valStack.push(res);
+      }
+    }
+
+    if (valStack.length !== 1) {
+      throw new Error('Incomplete expression');
+    }
+
+    return valStack[0];
+  }
+
+  /**
+   * Main Evaluation Pipeline: Tokenize -> Shunting-Yard -> RPN Evaluator
+   */
+  evaluate(expr) {
+    if (!expr || typeof expr !== 'string' || expr.trim() === '') {
+      throw new Error('Empty expression');
+    }
+
+    const trimmed = expr.trim();
+
+    // Guard against trailing dangling operators
+    if (/[\+\−\-\×\*\÷\/\^\(]\s*$/.test(trimmed)) {
+      throw new Error('Incomplete expression');
+    }
+
+    const tokens = this.tokenize(trimmed);
+    if (tokens.length === 0) {
+      return 0;
+    }
+
+    const rpn = this.shuntingYard(tokens);
+    return this.evaluateRPN(rpn);
+  }
+}
+
+/**
+ * ============================================================================
+ * AuraCalc Interactive Controller
+ * Manages State, UI Synchronization, Audio, History, and User Interactions
+ * ============================================================================
+ */
 class Calculator {
   constructor() {
-    // Core State Variables
+    // Core Calculation Engine (Pure, Safe, No eval)
+    this.engine = new CalculationEngine({ isAngleDegree: true });
+
+    // Interactive State
     this.currentInput = '0';
     this.expression = '';
     this.isEvaluated = false;
     this.hasError = false;
     this.memoryValue = 0;
-    this.isAngleDegree = true; // true = DEG, false = RAD
+    this.isAngleDegree = true;
     this.soundEnabled = true;
     this.audioContext = null;
 
-    // Cache DOM Elements
+    // Cache DOM Elements & Bind Listeners
     this.initElements();
-    // Bind Event Handlers
     this.initEventListeners();
-    // Restore Saved Settings
     this.restorePreferences();
-    // Initial UI Render
     this.updateDisplay();
   }
 
   /**
-   * Initialize and cache all critical DOM references
+   * Cache DOM Element References
    */
   initElements() {
     // Screen Elements
@@ -65,7 +405,7 @@ class Calculator {
     this.btnClear = document.getElementById('btn-clear');
     this.btnEquals = document.getElementById('btn-equals');
 
-    // Icons
+    // Toolbar Icons
     this.iconSun = document.querySelector('.icon-sun');
     this.iconMoon = document.querySelector('.icon-moon');
     this.iconSoundOn = document.querySelector('.icon-sound-on');
@@ -89,7 +429,7 @@ class Calculator {
       this.memoryRibbon.addEventListener('click', (e) => this.handleMemoryClick(e));
     }
 
-    // Toolbar Utility Buttons
+    // Toolbar Controls
     this.themeToggleBtn.addEventListener('click', () => this.toggleTheme());
     this.scientificToggleBtn.addEventListener('click', () => this.toggleScientificTray());
     this.historyToggleBtn.addEventListener('click', () => this.toggleHistoryDrawer(true));
@@ -98,17 +438,17 @@ class Calculator {
       this.toggleAngleBtn.addEventListener('click', () => this.toggleAngleMode());
     }
 
-    // History Drawer Actions
+    // History Drawer Controls
     this.btnCloseHistory.addEventListener('click', () => this.toggleHistoryDrawer(false));
     this.btnClearHistory.addEventListener('click', () => this.clearHistory());
     this.historyList.addEventListener('click', (e) => this.handleHistoryClick(e));
 
-    // Hardware Keyboard Navigation
+    // Hardware Keyboard Input
     window.addEventListener('keydown', (e) => this.handleKeyboardInput(e));
   }
 
   /**
-   * Synthesize acoustic tactile click feedback using Web Audio API
+   * Audio synthesis for tactile acoustic feedback
    */
   playBeep(freq = 520, type = 'sine', duration = 0.04) {
     if (!this.soundEnabled) return;
@@ -135,12 +475,12 @@ class Calculator {
       osc.start();
       osc.stop(this.audioContext.currentTime + duration);
     } catch {
-      // AudioContext unavailable or restricted
+      // AudioContext unavailable in silent context
     }
   }
 
   /**
-   * Helper: Get the current active numeric token being typed
+   * Helper: Retrieve the active numerical segment being typed
    */
   getCurrentNumberSegment() {
     const parts = this.currentInput.split(/[\+\−\×\÷\^\(\)\s]+/);
@@ -148,13 +488,12 @@ class Calculator {
   }
 
   /**
-   * A & B. Handle Primary Keypad Interactions
+   * Keypad click router
    */
   handleKeypadClick(e) {
     const btn = e.target.closest('button');
     if (!btn) return;
 
-    // Reset error state on any new interaction
     if (this.hasError) {
       this.hideError();
     }
@@ -200,13 +539,13 @@ class Calculator {
 
   /**
    * B. Numeric Input: Append digits (0-9, 00)
-   * Requirements:
-   * - Prevent unintended leading zeros (e.g. '0' then '5' becomes '5')
-   * - Starting a fresh calculation if following an evaluated result
-   * - Handling '00' without producing redundant zeros
    */
   appendDigit(digit) {
-    // If user previously pressed '=', start a brand new calculation
+    if (this.hasError) {
+      this.clearAll();
+    }
+
+    // If following evaluated result, begin fresh calculation
     if (this.isEvaluated) {
       this.currentInput = digit === '00' ? '0' : digit;
       this.expression = '';
@@ -214,29 +553,28 @@ class Calculator {
       return;
     }
 
-    // Standalone zero replacement: '0' -> '5'
+    // Replace initial standalone zero
     if (this.currentInput === '0') {
       this.currentInput = digit === '00' ? '0' : digit;
       return;
     }
 
-    // Negative zero replacement: '-0' -> '-5'
+    // Replace negative zero
     if (this.currentInput === '-0') {
       this.currentInput = '-' + (digit === '00' ? '0' : digit);
       return;
     }
 
-    // Trailing zero after operator: e.g. "12 + 0" -> "12 + 5"
+    // Replace standalone zero following an operator (e.g., "12 + 0" -> "12 + 5")
     if (/\s0$/.test(this.currentInput)) {
       if (digit === '0' || digit === '00') {
-        // Do not add extra zeros to a standalone ' 0'
         return;
       }
       this.currentInput = this.currentInput.slice(0, -1) + digit;
       return;
     }
 
-    // Prevent multiple zeros when user taps '00' on '0'
+    // Prevent redundant '00' on zero segment
     if (digit === '00') {
       const currentSegment = this.getCurrentNumberSegment();
       if (currentSegment === '' || currentSegment === '0') {
@@ -249,14 +587,13 @@ class Calculator {
   }
 
   /**
-   * B. Numeric Input: Append decimal point (.)
-   * Requirements:
-   * - Prevent multiple decimal points within a single number
-   * - Support numbers starting with a decimal (e.g. '.5' -> '0.5')
-   * - Support decimal immediately after operators ('12 + .' -> '12 + 0.')
+   * B. Decimal Input: Append decimal point (.)
    */
   appendDecimal() {
-    // If following evaluated result, start fresh with '0.'
+    if (this.hasError) {
+      this.clearAll();
+    }
+
     if (this.isEvaluated) {
       this.currentInput = '0.';
       this.expression = '';
@@ -266,12 +603,12 @@ class Calculator {
 
     const currentSegment = this.getCurrentNumberSegment();
 
-    // Prevent multiple decimals in the active number
+    // Prevent multiple decimals in the same number
     if (currentSegment.includes('.')) {
       return;
     }
 
-    // If current segment is empty, or ends with an operator/space, prefix with 0
+    // Interpret leading decimal (.5) as 0.5
     if (currentSegment === '' || currentSegment === '-') {
       this.currentInput += '0.';
     } else {
@@ -280,14 +617,14 @@ class Calculator {
   }
 
   /**
-   * C. Arithmetic Operators: (+, −, ×, ÷)
-   * Requirements:
-   * - Associating operators with operands
-   * - Chaining from evaluated results seamlessly
-   * - Operator replacement if changed repeatedly (e.g. '12 + ' then '×' -> '12 × ')
+   * B & C. Operator Chaining & Operator Replacement
    */
   appendOperator(op) {
-    // If following evaluated result, chain from the result
+    if (this.hasError) {
+      this.hideError();
+    }
+
+    // If following evaluated result, chain consecutive calculation
     if (this.isEvaluated) {
       this.isEvaluated = false;
       this.expression = `${this.currentInput} ${op} `;
@@ -299,24 +636,21 @@ class Calculator {
     const lastChar = trimmed.slice(-1);
     const operators = ['+', '−', '×', '÷', '^'];
 
-    // Operator replacement when user changes their mind
+    // Operator replacement when user selects a different operator
     if (operators.includes(lastChar)) {
-      // Check if preceded by space (standard binary operator)
       const lastOpIndex = this.currentInput.lastIndexOf(lastChar);
       this.currentInput = this.currentInput.slice(0, lastOpIndex) + op + ' ';
       return;
     }
 
-    // Do not append binary operator immediately after an open parenthesis '('
+    // Prevent binary operators immediately following open parenthesis '('
     if (lastChar === '(') {
       if (op === '−') {
-        // Allow negative sign after open parenthesis
         this.currentInput += '-';
       }
       return;
     }
 
-    // Append binary operator with balanced spacing
     if (this.currentInput !== '') {
       this.currentInput += ` ${op} `;
     } else {
@@ -325,7 +659,7 @@ class Calculator {
   }
 
   /**
-   * Handle Parentheses
+   * Parentheses Input
    */
   appendParenthesis(paren) {
     if (this.isEvaluated) {
@@ -343,13 +677,11 @@ class Calculator {
   }
 
   /**
-   * Toggle positive / negative sign (±)
-   * Handles both single numbers and sub-expressions
+   * Toggle sign (±)
    */
   toggleSign() {
     if (this.currentInput === '0') return;
 
-    // If single number
     if (/^-?\d+(\.\d+)?$/.test(this.currentInput)) {
       if (this.currentInput.startsWith('-')) {
         this.currentInput = this.currentInput.slice(1);
@@ -359,7 +691,6 @@ class Calculator {
       return;
     }
 
-    // If multi-token expression, toggle the last operand
     const match = this.currentInput.match(/(.*[\+\−\×\÷\^\(]\s*)(-?\d+(\.\d+)?)$/);
     if (match) {
       const prefix = match[1];
@@ -373,7 +704,7 @@ class Calculator {
   }
 
   /**
-   * Apply percentage (%)
+   * Percentage (%)
    */
   applyPercentage() {
     try {
@@ -393,9 +724,6 @@ class Calculator {
 
   /**
    * D. Control Button: Clear (C / AC)
-   * Requirements:
-   * - Reset the current calculation
-   * - Clear the expression and return calculator to initial state
    */
   clearAll() {
     this.currentInput = '0';
@@ -408,13 +736,8 @@ class Calculator {
 
   /**
    * D. Control Button: Backspace (⌫)
-   * Requirements:
-   * - Remove the last character from current input
-   * - Handle empty input gracefully (revert to '0')
-   * - Avoid leaving calculator in an inconsistent state
    */
   backspace() {
-    // If editing after an evaluation, allow modification
     if (this.isEvaluated) {
       this.isEvaluated = false;
     }
@@ -424,7 +747,6 @@ class Calculator {
       return;
     }
 
-    // Single digit or negative single digit returns to '0'
     if (
       this.currentInput.length <= 1 ||
       (this.currentInput.length === 2 && this.currentInput.startsWith('-'))
@@ -433,23 +755,21 @@ class Calculator {
       return;
     }
 
-    // If ending with operator and spaces (e.g. "12 + "), remove the operator cleanly
+    // Safely remove trailing binary operator with spaces (e.g., "12 + ")
     if (/\s[\+\−\×\÷\^]\s$/.test(this.currentInput)) {
       this.currentInput = this.currentInput.slice(0, -3);
       return;
     }
 
-    // If ending with parenthesis or function tag
+    // Safely remove functions
     if (/\b(sin|cos|tan|log|ln|sqrt)\($/.test(this.currentInput)) {
       this.currentInput = this.currentInput.replace(/\b(sin|cos|tan|log|ln|sqrt)\($/, '');
       if (this.currentInput === '') this.currentInput = '0';
       return;
     }
 
-    // Default: remove last character
     this.currentInput = this.currentInput.slice(0, -1);
 
-    // Clean up trailing whitespace
     if (this.currentInput.endsWith(' ')) {
       this.currentInput = this.currentInput.trimEnd();
     }
@@ -460,102 +780,15 @@ class Calculator {
   }
 
   /**
-   * Evaluate mathematical expression safely & accurately
-   * - Replaces custom visual glyphs with standard arithmetic tokens
-   * - Detects division by zero explicitly
-   * - Mitigates floating-point precision anomalies
-   */
-  evaluateExpression(expr) {
-    if (!expr || expr.trim() === '') {
-      throw new Error('Empty expression');
-    }
-
-    let clean = expr.trim();
-
-    // Prevent evaluation if ending with an operator
-    if (/[\+\−\×\÷\^\(]\s*$/.test(clean)) {
-      throw new Error('Incomplete expression');
-    }
-
-    // Normalize visual operators to JS math operators
-    clean = clean
-      .replace(/×/g, '*')
-      .replace(/÷/g, '/')
-      .replace(/−/g, '-')
-      .replace(/\^/g, '**');
-
-    // Handle Scientific Functions
-    clean = clean.replace(/sin\(([^)]+)\)/g, (_, val) => {
-      let num = parseFloat(this.evaluateExpression(val));
-      if (this.isAngleDegree) num = (num * Math.PI) / 180;
-      return Math.sin(num);
-    });
-
-    clean = clean.replace(/cos\(([^)]+)\)/g, (_, val) => {
-      let num = parseFloat(this.evaluateExpression(val));
-      if (this.isAngleDegree) num = (num * Math.PI) / 180;
-      return Math.cos(num);
-    });
-
-    clean = clean.replace(/tan\(([^)]+)\)/g, (_, val) => {
-      let num = parseFloat(this.evaluateExpression(val));
-      if (this.isAngleDegree) num = (num * Math.PI) / 180;
-      return Math.tan(num);
-    });
-
-    clean = clean.replace(/log\(([^)]+)\)/g, (_, val) => {
-      const num = parseFloat(this.evaluateExpression(val));
-      if (num <= 0) throw new Error('Invalid log operand');
-      return Math.log10(num);
-    });
-
-    clean = clean.replace(/ln\(([^)]+)\)/g, (_, val) => {
-      const num = parseFloat(this.evaluateExpression(val));
-      if (num <= 0) throw new Error('Invalid ln operand');
-      return Math.log(num);
-    });
-
-    clean = clean.replace(/sqrt\(([^)]+)\)/g, (_, val) => {
-      const num = parseFloat(this.evaluateExpression(val));
-      if (num < 0) throw new Error('Negative square root');
-      return Math.sqrt(num);
-    });
-
-    // Sanitization: Ensure only safe mathematical characters exist
-    if (/[^0-9\+\-\*\/\.\(\)\s\*\^eE]/.test(clean)) {
-      throw new Error('Invalid syntax');
-    }
-
-    // Check for explicit division by literal 0 before execution
-    if (/\/\s*0(?![0-9\.])/.test(clean)) {
-      throw new Error('Cannot divide by zero');
-    }
-
-    // Compute result in strict isolated execution
-    const rawResult = Function(`'use strict'; return (${clean});`)();
-
-    // Check finite boundary & division by zero outcome
-    if (!isFinite(rawResult)) {
-      throw new Error('Cannot divide by zero');
-    }
-
-    if (isNaN(rawResult)) {
-      throw new Error('Invalid operation');
-    }
-
-    return this.formatResult(rawResult);
-  }
-
-  /**
-   * Format numeric result to eradicate IEEE 754 float glitches (e.g. 0.1 + 0.2 = 0.3)
+   * D. Format Results: Eliminate IEEE 754 float glitches (0.1 + 0.2 = 0.3)
    */
   formatResult(val) {
     if (typeof val !== 'number') return String(val);
 
-    // Limit precision to 12 digits to clear rounding residue
+    // Limit precision to 12 significant digits to erase float residue
     const cleanFloat = parseFloat(Number(val.toPrecision(12)).toString());
 
-    // Switch to clean scientific notation for extreme numbers
+    // Format extreme values into readable scientific notation
     if (Math.abs(cleanFloat) >= 1e14 || (Math.abs(cleanFloat) > 0 && Math.abs(cleanFloat) < 1e-6)) {
       return cleanFloat.toExponential(6).replace(/\+/, '');
     }
@@ -564,35 +797,32 @@ class Calculator {
   }
 
   /**
-   * D. Control Button: Equals (=)
-   * Requirements:
-   * - Evaluate current expression
-   * - Display final result in primary display
-   * - Show completed expression in secondary display
-   * - Prevent evaluation when expression is incomplete or invalid
+   * A, B, C & D. Calculate Final Result (Safe Evaluation via CalculationEngine)
    */
   calculateResult() {
     if (this.isEvaluated) return;
 
     try {
-      const evaluatedValue = this.evaluateExpression(this.currentInput);
+      // Evaluate safely through custom Tokenizer & Shunting-Yard engine
+      const rawResult = this.engine.evaluate(this.currentInput);
+      const formattedResult = this.formatResult(rawResult);
 
-      // Save to calculation history
-      this.addHistoryEntry(this.currentInput, evaluatedValue);
+      // Record in calculation history
+      this.addHistoryEntry(this.currentInput, formattedResult);
 
-      // Secondary display shows completed expression with '='
+      // Update secondary display with evaluated equation
       this.expression = `${this.currentInput} =`;
-      // Primary display shows final evaluated result
-      this.currentInput = evaluatedValue;
+      // Update primary display with final result
+      this.currentInput = formattedResult;
       this.isEvaluated = true;
       this.displayPreview.textContent = '\u00A0';
     } catch (err) {
-      this.showError(err.message || 'Syntax Error');
+      this.showError(err.message || 'Invalid expression');
     }
   }
 
   /**
-   * Real-time preview calculation for instant user feedback
+   * Real-time preview calculation
    */
   computeLivePreview() {
     if (!this.currentInput || this.currentInput === '0' || this.isEvaluated) {
@@ -600,14 +830,14 @@ class Calculator {
       return;
     }
 
-    // Only compute live preview if expression contains an operator
     if (!/[\+\−\×\÷\^]/.test(this.currentInput)) {
       this.displayPreview.textContent = '\u00A0';
       return;
     }
 
     try {
-      const preview = this.evaluateExpression(this.currentInput);
+      const raw = this.engine.evaluate(this.currentInput);
+      const preview = this.formatResult(raw);
       if (preview !== this.currentInput) {
         this.displayPreview.textContent = `= ${preview}`;
       } else {
@@ -619,17 +849,17 @@ class Calculator {
   }
 
   /**
-   * Update Display Screen & Auto-Scroll to prevent clipping long expressions
+   * Update Display Readouts & Auto-Scroll
    */
   updateDisplay() {
     this.displayPrimary.textContent = this.currentInput || '0';
     this.displayExpression.textContent = this.expression || '\u00A0';
 
-    // Auto-scroll long equations so latest characters are always visible
+    // Auto-scroll long equations to keep latest characters in view
     this.displayPrimary.scrollLeft = this.displayPrimary.scrollWidth;
     this.displayExpression.scrollLeft = this.displayExpression.scrollWidth;
 
-    // Toggle AC / C label on clear button dynamically
+    // Toggle Clear button AC / C state
     if (this.btnClear) {
       const isInitial = this.currentInput === '0' && this.expression === '';
       this.btnClear.textContent = isInitial ? 'AC' : 'C';
@@ -640,7 +870,7 @@ class Calculator {
   }
 
   /**
-   * Display Error Banner & update accessibility attributes
+   * Show Error Alert Banner
    */
   showError(msg) {
     this.hasError = true;
@@ -651,7 +881,7 @@ class Calculator {
   }
 
   /**
-   * Dismiss Error Banner cleanly
+   * Hide Error Alert Banner
    */
   hideError() {
     this.hasError = false;
@@ -661,7 +891,7 @@ class Calculator {
   }
 
   /**
-   * Scientific Keypad Functions
+   * Scientific Keypad Interactions
    */
   handleScientificClick(e) {
     const btn = e.target.closest('button');
@@ -759,7 +989,7 @@ class Calculator {
   }
 
   /**
-   * Memory Ribbon Operations
+   * Memory Operations
    */
   handleMemoryClick(e) {
     const btn = e.target.closest('button');
@@ -791,7 +1021,7 @@ class Calculator {
   }
 
   /**
-   * Calculation History Operations
+   * Calculation History
    */
   addHistoryEntry(expr, result) {
     if (this.historyEmptyMessage) {
@@ -844,7 +1074,8 @@ class Calculator {
   }
 
   /**
-   * Hardware Keyboard Event Handler & Visual Feedback
+   * E. Keyboard Support
+   * Prevents unintended browser shortcuts while keeping full interaction
    */
   handleKeyboardInput(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -931,7 +1162,7 @@ class Calculator {
   }
 
   /**
-   * Drawer & Settings Toggles
+   * Toggles & Settings
    */
   toggleTheme() {
     const html = document.documentElement;
@@ -952,6 +1183,7 @@ class Calculator {
 
   toggleAngleMode() {
     this.isAngleDegree = !this.isAngleDegree;
+    this.engine.setAngleDegree(this.isAngleDegree);
     this.indicatorAngleMode.textContent = this.isAngleDegree ? 'DEG' : 'RAD';
   }
 
