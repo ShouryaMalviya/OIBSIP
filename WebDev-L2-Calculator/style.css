@@ -533,7 +533,8 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-digit:active {
+.btn-digit:active,
+.btn-digit.btn-active {
   background-color: var(--btn-numeric-active);
   transform: translateY(2px);
   box-shadow: 0 1px 0 #a9a18f, 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -554,7 +555,8 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-operator:active {
+.btn-operator:active,
+.btn-operator.btn-active {
   background-color: var(--btn-action-active);
   transform: translateY(2px);
   box-shadow: 0 1px 0 #6e082f, 0 2px 6px rgba(150, 13, 65, 0.3);
@@ -574,7 +576,8 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-clear:active {
+.btn-clear:active,
+.btn-clear.btn-active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 #5e0728, 0 2px 4px rgba(150, 13, 65, 0.4);
 }
@@ -591,7 +594,8 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-backspace:active {
+.btn-backspace:active,
+.btn-backspace.btn-active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 #5e0728, 0 2px 4px rgba(150, 13, 65, 0.4);
 }
@@ -615,7 +619,8 @@ body {
   transform: translateY(-1px);
 }
 
-.btn-control:not(.btn-clear):not(.btn-backspace):active {
+.btn-control:not(.btn-clear):not(.btn-backspace):active,
+.btn-control:not(.btn-clear):not(.btn-backspace).btn-active {
   background-color: var(--btn-ctrl-active);
   transform: translateY(2px);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -638,7 +643,8 @@ body {
   box-shadow: 0 5px 0 #5c0626, 0 10px 24px rgba(150, 13, 65, 0.55);
 }
 
-.btn-equals:active {
+.btn-equals:active,
+.btn-equals.btn-active {
   background-color: var(--btn-equals-active);
   transform: translateY(2px);
   box-shadow: 0 1px 0 #5c0626, 0 3px 8px rgba(150, 13, 65, 0.45);
