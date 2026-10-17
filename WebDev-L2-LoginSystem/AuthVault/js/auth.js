@@ -163,7 +163,7 @@ const AuthStorage = {
     const users = this.getUsers();
 
     const newUser = {
-      id: 'usr_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+      id: 'usr_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
       username: username.trim(),
       email: email.trim().toLowerCase(),
       passwordHash: passwordHash,

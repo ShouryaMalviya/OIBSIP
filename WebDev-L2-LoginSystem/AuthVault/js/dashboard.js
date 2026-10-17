@@ -102,7 +102,20 @@
         profileSessionTimeEl.textContent = 'Active';
       }
     }
+
+    // Safely update registered accounts count from localStorage
+    const registeredCountEl = document.getElementById('registeredAccountsCount');
+    if (registeredCountEl) {
+      try {
+        const rawUsers = localStorage.getItem('authVaultUsers');
+        const users = rawUsers ? JSON.parse(rawUsers) : [];
+        registeredCountEl.textContent = String(Array.isArray(users) ? users.length : 1);
+      } catch {
+        registeredCountEl.textContent = '1';
+      }
+    }
   }
+
 
   // Setup DOM event bindings
   document.addEventListener('DOMContentLoaded', () => {
