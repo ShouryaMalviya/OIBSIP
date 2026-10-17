@@ -1,0 +1,19 @@
+{
+  "name": "authvault-login-system",
+  "version": "1.0.0",
+  "description": "AuthVault — Secure Authentication System (Oasis Infobyte Level 2 Internship Project)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "authentication",
+    "web-crypto",
+    "sha-256",
+    "oasis-infobyte",
+    "vanilla-js"
+  ],
+  "author": "Shourya Malviya",
+  "license": "ISC"
+}
