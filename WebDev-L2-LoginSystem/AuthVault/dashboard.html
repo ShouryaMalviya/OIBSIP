@@ -13,10 +13,12 @@
   <div class="bg-ambient" aria-hidden="true"></div>
   <div class="bg-grid-overlay" aria-hidden="true"></div>
 
-  <main class="dashboard-wrapper">
+  <!-- Protected Dashboard Container (Hidden until session is authenticated in js/dashboard.js) -->
+  <main class="dashboard-wrapper dashboard-protected-wrapper" id="protectedDashboard" style="display: none;">
+    
     <!-- Dashboard Top Navigation -->
     <nav class="dashboard-nav" aria-label="Main Navigation">
-      <a href="index.html" class="dashboard-nav-brand">
+      <a href="dashboard.html" class="dashboard-nav-brand" aria-label="AuthVault Home">
         <div class="brand-icon-wrapper" aria-hidden="true">
           <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -24,44 +26,46 @@
           </svg>
         </div>
         <span class="brand-title">AuthVault</span>
-        <span class="brand-badge">Dashboard</span>
+        <span class="brand-badge">Vault</span>
       </a>
 
       <div class="dashboard-user-menu">
         <div class="dashboard-badge-user" id="userBadge">
           <div class="dashboard-avatar" id="avatarInitial">U</div>
-          <span id="navUsername">Guest User</span>
+          <span id="navUsername">User</span>
         </div>
-        <button type="button" id="logoutBtn" class="btn btn-secondary" style="width: auto; padding: 0.5rem 1.1rem; font-size: 0.88rem;">
-          Sign Out
+        <button type="button" id="logoutBtn" class="btn btn-secondary" style="width: auto; padding: 0.55rem 1.25rem; font-size: 0.88rem;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Sign Out</span>
         </button>
       </div>
     </nav>
 
-    <!-- Alert / System Banner -->
-    <div id="dashboardAlert" class="alert-box visible alert-info" role="status">
-      <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="16" x2="12" y2="12"></line>
-        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-      </svg>
-      <div class="alert-content">
-        <span class="alert-message">
-          <strong>Architecture Foundation (Part 1):</strong> Dashboard structure initialized. Session authentication, route guards, and active user profile loading will be completed in Part 2.
-        </span>
-      </div>
-    </div>
+    <!-- Welcome Header Banner -->
+    <header class="dashboard-welcome">
+      <h1 class="dashboard-welcome-title">Welcome back, <span id="welcomeUsername">User</span></h1>
+      <p class="dashboard-welcome-desc">Your active session is authenticated and stored securely in browser <code>sessionStorage</code>.</p>
+    </header>
 
     <!-- Dashboard Panels Grid -->
     <div class="dashboard-grid">
-      <!-- Profile Information Panel -->
+      
+      <!-- Panel 1: User Account Information -->
       <section class="dashboard-panel" aria-labelledby="profile-panel-heading">
         <div class="dashboard-panel-header">
-          <h2 id="profile-panel-heading" class="panel-title">User Profile Details</h2>
-          <span class="brand-badge" id="accountStatusBadge">Part 1 Demo</span>
+          <h2 id="profile-panel-heading" class="panel-title">User Information</h2>
+          <div class="status-pill" id="profileAuthStatus">
+            <span class="status-pill-dot" aria-hidden="true"></span>
+            <span>Active Session</span>
+          </div>
         </div>
+
         <div class="data-row">
-          <span class="data-label">Account Username</span>
+          <span class="data-label">Username</span>
           <span class="data-value" id="profileUsername">—</span>
         </div>
         <div class="data-row">
@@ -69,41 +73,43 @@
           <span class="data-value" id="profileEmail">—</span>
         </div>
         <div class="data-row">
-          <span class="data-label">Password Digest (SHA-256)</span>
-          <span class="data-value" id="profileHash" title="SHA-256 hash">—</span>
+          <span class="data-label">Session Established</span>
+          <span class="data-value" id="profileSessionTime">—</span>
         </div>
         <div class="data-row">
-          <span class="data-label">Registered Timestamp</span>
-          <span class="data-value" id="profileRegisteredAt">—</span>
+          <span class="data-label">Session Storage Key</span>
+          <span class="data-value">authVaultSession</span>
         </div>
       </section>
 
-      <!-- Cryptographic Security Audit Panel -->
+      <!-- Panel 2: Cryptographic Architecture & Security Status -->
       <section class="dashboard-panel" aria-labelledby="security-panel-heading">
         <div class="dashboard-panel-header">
-          <h2 id="security-panel-heading" class="panel-title">Security Architecture</h2>
-          <span class="brand-badge">Audit</span>
+          <h2 id="security-panel-heading" class="panel-title">Authentication Status</h2>
+          <span class="brand-badge">Part 2 Verified</span>
         </div>
+
         <div class="data-row">
-          <span class="data-label">Hash Algorithm</span>
+          <span class="data-label">Authentication Engine</span>
           <span class="data-value">Web Crypto SHA-256</span>
         </div>
         <div class="data-row">
-          <span class="data-label">Client-Side Persistence</span>
-          <span class="data-value">localStorage [authVaultUsers]</span>
+          <span class="data-label">Credential Verification</span>
+          <span class="data-value">Hash Comparison (localStorage)</span>
         </div>
         <div class="data-row">
-          <span class="data-label">Plaintext Stored</span>
-          <span class="data-value" style="color: var(--color-success);">0 (Zero Plaintext)</span>
+          <span class="data-label">Plaintext in Session</span>
+          <span class="data-value" style="color: var(--color-success);">0 (Zero Passwords Stored)</span>
         </div>
         <div class="data-row">
-          <span class="data-label">Registered Accounts Count</span>
-          <span class="data-value" id="registeredAccountsCount">0</span>
+          <span class="data-label">Session Boundary</span>
+          <span class="data-value">Tab / Window Isolated</span>
         </div>
       </section>
+
     </div>
 
-    <!-- Security Disclaimer -->
+    <!-- Educational Security Disclaimer Box -->
     <aside class="security-disclaimer" style="max-width: 100%; margin-top: 2rem;" aria-label="Security Notice">
       <svg class="security-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="10"></circle>
@@ -111,16 +117,17 @@
         <line x1="12" y1="8" x2="12.01" y2="8"></line>
       </svg>
       <div>
-        <strong>Security & Implementation Scope:</strong> This dashboard is part of an educational client-side demonstration of cryptographic hashing using the Web Crypto API. Full session lifecycle and route protection will be connected in Part 2.
+        <strong>Educational Demonstration Limitation:</strong> Client-side storage (<code>sessionStorage</code> and <code>localStorage</code>) can be inspected or edited through browser developer tools. This dashboard's session guard illustrates application navigation flow and state management, but is not a secure server-side authorization boundary. Production systems require secure backend session cookies with <code>HttpOnly</code>, <code>SameSite</code>, and TLS encryption.
       </div>
     </aside>
+
   </main>
 
   <footer class="app-footer">
     <p>AuthVault &copy; 2026 &mdash; Built with Modern Vanilla Web Standards.</p>
   </footer>
 
-  <!-- External Script -->
+  <!-- External Dashboard Script -->
   <script src="js/dashboard.js"></script>
 </body>
 </html>

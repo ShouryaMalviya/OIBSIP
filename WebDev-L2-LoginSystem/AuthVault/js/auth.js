@@ -1,14 +1,17 @@
 /**
  * AuthVault — Secure Authentication System
- * Part 1: Registration Core, Web Crypto SHA-256 Hashing, & Design System Controllers
+ * Part 2: Unified Authentication Engine, Session Management & Login Validation
  * 
  * Architectural Highlights:
- * - Namespace/Module Pattern for separation of concerns
- * - Web Crypto API (SubtleCrypto) for client-side SHA-256 password hashing
- * - LocalStorage persistence with structured error handling
- * - Case-insensitive uniqueness verification for username & email
- * - Zero innerHTML on untrusted content (strictly textContent for XSS immunity)
- * - Accessible UI state management with aria-live polite alerts
+ * - Reusable Module Pattern: CryptoUtils, AuthStorage, SessionManager, AuthValidator, AlertUI
+ * - Native Web Crypto API (SubtleCrypto) for SHA-256 password hashing
+ * - LocalStorage user persistence ('authVaultUsers') with zero plaintext storage
+ * - SessionStorage active login state ('authVaultSession') with minimum required metadata
+ * - Case-insensitive credential lookup (supports username or email)
+ * - Uniform generic error messages to eliminate user enumeration risks
+ * - Prevention of duplicate submissions via loading state locking
+ * - Strict textContent insertion for complete XSS immunity
+ * - Seamless integration with Part 1 registration and Part 2 protected dashboard
  */
 
 'use strict';
@@ -18,8 +21,10 @@
    ========================================================================== */
 const AUTH_CONFIG = Object.freeze({
   STORAGE_KEY: 'authVaultUsers',
+  SESSION_KEY: 'authVaultSession',
   MIN_PASSWORD_LENGTH: 8,
-  REDIRECT_DELAY_MS: 1800,
+  REDIRECT_DELAY_MS: 1600,
+  AUTH_PROCESSING_DELAY_MS: 500, // Provides realistic micro-animation feedback
   REGEX: {
     // Client-side email format verification
     EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
@@ -73,11 +78,12 @@ const CryptoUtils = {
 };
 
 /* ==========================================================================
-   3. Storage Management Layer
+   3. Storage Management Layer (localStorage: authVaultUsers)
    ========================================================================== */
 const AuthStorage = {
   /**
    * Safely retrieves all registered users from localStorage.
+   * Handles corrupted or non-array records gracefully.
    * @returns {Array<Object>} List of registered user objects.
    */
   getUsers() {
@@ -117,7 +123,7 @@ const AuthStorage = {
    * @returns {boolean}
    */
   isUsernameTaken(username) {
-    const normalized = username.trim().toLowerCase();
+    const normalized = (username || '').trim().toLowerCase();
     const users = this.getUsers();
     return users.some(u => (u.username || '').toLowerCase() === normalized);
   },
@@ -128,9 +134,24 @@ const AuthStorage = {
    * @returns {boolean}
    */
   isEmailTaken(email) {
-    const normalized = email.trim().toLowerCase();
+    const normalized = (email || '').trim().toLowerCase();
     const users = this.getUsers();
     return users.some(u => (u.email || '').toLowerCase() === normalized);
+  },
+
+  /**
+   * Finds an existing user by username or email (case-insensitive).
+   * @param {string} identifier - Username or Email address.
+   * @returns {Object|null} Matching user record or null if not found.
+   */
+  findUserByIdentifier(identifier) {
+    const normalized = (identifier || '').trim().toLowerCase();
+    if (!normalized) return null;
+    const users = this.getUsers();
+    return users.find(u => 
+      (u.username || '').toLowerCase() === normalized || 
+      (u.email || '').toLowerCase() === normalized
+    ) || null;
   },
 
   /**
@@ -156,11 +177,77 @@ const AuthStorage = {
 };
 
 /* ==========================================================================
-   4. Validation Logic
+   4. Session Management Layer (sessionStorage: authVaultSession)
+   ========================================================================== */
+const SessionManager = {
+  /**
+   * Retrieves the active session from sessionStorage.
+   * @returns {Object|null} Valid session payload or null.
+   */
+  getSession() {
+    try {
+      const raw = sessionStorage.getItem(AUTH_CONFIG.SESSION_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && parsed.username && parsed.email) {
+        return parsed;
+      }
+      return null;
+    } catch (err) {
+      console.error('AuthVault SessionManager: Error parsing session payload', err);
+      return null;
+    }
+  },
+
+  /**
+   * Establishes a new active session using sessionStorage.
+   * Contains only the minimum account information needed to identify the logged-in user.
+   * Crucial: Zero passwords or password hashes are ever included.
+   * 
+   * @param {Object} user - The authenticated user record { username, email }
+   * @returns {Object} Created session payload
+   */
+  createSession(user) {
+    try {
+      const sessionData = {
+        username: user.username,
+        email: user.email,
+        loggedInAt: new Date().toISOString()
+      };
+      sessionStorage.setItem(AUTH_CONFIG.SESSION_KEY, JSON.stringify(sessionData));
+      return sessionData;
+    } catch (err) {
+      console.error('AuthVault SessionManager: Failed to write session', err);
+      throw new Error('Unable to create active session. Browser storage might be restricted.');
+    }
+  },
+
+  /**
+   * Destroys the active session from sessionStorage.
+   */
+  destroySession() {
+    try {
+      sessionStorage.removeItem(AUTH_CONFIG.SESSION_KEY);
+    } catch (err) {
+      console.error('AuthVault SessionManager: Failed to clear session', err);
+    }
+  },
+
+  /**
+   * Checks whether an active, valid session currently exists.
+   * @returns {boolean}
+   */
+  isAuthenticated() {
+    return Boolean(this.getSession());
+  }
+};
+
+/* ==========================================================================
+   5. Validation Logic
    ========================================================================== */
 const AuthValidator = {
   /**
-   * Validates a username.
+   * Validates a username for registration.
    * @param {string} username 
    * @returns {{ isValid: boolean, error?: string }}
    */
@@ -182,7 +269,7 @@ const AuthValidator = {
   },
 
   /**
-   * Validates an email address.
+   * Validates an email address for registration.
    * @param {string} email 
    * @returns {{ isValid: boolean, error?: string }}
    */
@@ -199,7 +286,7 @@ const AuthValidator = {
 
   /**
    * Validates password strength:
-   * Requires at least 8 characters and at least one number.
+   * Requires at least 8 characters and at least one numeric digit.
    * @param {string} password 
    * @returns {{ isValid: boolean, hasLength: boolean, hasNumber: boolean, error?: string }}
    */
@@ -222,7 +309,7 @@ const AuthValidator = {
   },
 
   /**
-   * Validates confirmation match.
+   * Validates password confirmation match for registration.
    * @param {string} password 
    * @param {string} confirmPassword 
    * @returns {{ isValid: boolean, error?: string }}
@@ -239,11 +326,11 @@ const AuthValidator = {
 };
 
 /* ==========================================================================
-   5. UI State & Accessible Feedback Utilities
+   6. UI State & Accessible Feedback Utilities
    ========================================================================== */
 const AlertUI = {
   /**
-   * Displays an accessible alert box using textContent (preventing XSS).
+   * Displays an accessible alert box strictly using textContent (preventing XSS).
    * @param {HTMLElement} alertEl - The alert container element.
    * @param {string} message - The text message to display.
    * @param {'error'|'success'|'info'} type - The alert variation.
@@ -315,7 +402,7 @@ const AlertUI = {
 };
 
 /* ==========================================================================
-   6. Password Visibility Toggle Utility
+   7. Password Visibility Toggle Utility
    ========================================================================== */
 function setupPasswordToggle(buttonId, inputId) {
   const toggleBtn = document.getElementById(buttonId);
@@ -345,7 +432,7 @@ function setupPasswordToggle(buttonId, inputId) {
 }
 
 /* ==========================================================================
-   7. Registration Page Controller (Part 1 Core Flow)
+   8. Registration Page Controller (Part 1 Core Flow — Fully Preserved)
    ========================================================================== */
 function initRegistrationPage() {
   const form = document.getElementById('registerForm');
@@ -392,7 +479,7 @@ function initRegistrationPage() {
     }
   });
 
-  // Clear errors upon typing
+  // Clear field errors upon typing
   usernameInput.addEventListener('input', () => {
     if (usernameInput.classList.contains('is-invalid')) {
       AlertUI.clearFieldError(usernameInput, usernameError);
@@ -413,7 +500,7 @@ function initRegistrationPage() {
 
   // Handle Form Submission
   form.addEventListener('submit', async (e) => {
-    // 12. Never store passwords or password hashes in the URL
+    // Prevent default submission to avoid URL parameters / credentials leaking
     e.preventDefault();
 
     AlertUI.hide(alertEl);
@@ -431,7 +518,7 @@ function initRegistrationPage() {
       AlertUI.setFieldError(usernameInput, usernameError, usernameValidation.error);
       hasErrors = true;
     } else {
-      // 6. Case-insensitive duplicate check for username
+      // Case-insensitive duplicate check for username
       if (AuthStorage.isUsernameTaken(rawUsername)) {
         AlertUI.setFieldError(usernameInput, usernameError, 'This username is already taken. Please choose another.');
         hasErrors = true;
@@ -440,13 +527,13 @@ function initRegistrationPage() {
       }
     }
 
-    // 2 & 3. Validate Email format & duplicates
+    // 2. Validate Email format & duplicates
     const emailValidation = AuthValidator.validateEmail(rawEmail);
     if (!emailValidation.isValid) {
       AlertUI.setFieldError(emailInput, emailError, emailValidation.error);
       hasErrors = true;
     } else {
-      // 6. Case-insensitive duplicate check for email
+      // Case-insensitive duplicate check for email
       if (AuthStorage.isEmailTaken(rawEmail)) {
         AlertUI.setFieldError(emailInput, emailError, 'An account with this email address already exists.');
         hasErrors = true;
@@ -455,7 +542,7 @@ function initRegistrationPage() {
       }
     }
 
-    // 4. Validate Password requirements (>= 8 chars & at least 1 number)
+    // 3. Validate Password requirements (>= 8 chars & at least 1 number)
     const passwordValidation = AuthValidator.validatePassword(rawPassword);
     if (!passwordValidation.isValid) {
       AlertUI.setFieldError(passwordInput, passwordError, passwordValidation.error);
@@ -464,7 +551,7 @@ function initRegistrationPage() {
       AlertUI.setFieldError(passwordInput, passwordError, null);
     }
 
-    // 5. Validate Password confirmation match
+    // 4. Validate Password confirmation match
     const confirmValidation = AuthValidator.validateConfirmPassword(rawPassword, rawConfirmPassword);
     if (!confirmValidation.isValid) {
       AlertUI.setFieldError(confirmPasswordInput, confirmPasswordError, confirmValidation.error);
@@ -478,22 +565,22 @@ function initRegistrationPage() {
       return;
     }
 
-    // Set loading button state
+    // Lock button and display loading state to prevent repeated submissions
     submitBtn.classList.add('is-loading');
     submitBtn.disabled = true;
 
     try {
-      // 9. Hash password using Web Crypto API SHA-256 (Never store plaintext)
+      // Hash password using Web Crypto API SHA-256 (Never store plaintext)
       const passwordHash = await CryptoUtils.hashPassword(rawPassword);
 
-      // 10 & 11. Store username, email, passwordHash, and createdAt timestamp in localStorage under 'authVaultUsers'
+      // Store username, email, passwordHash, and createdAt timestamp in localStorage
       AuthStorage.createUser({
         username: rawUsername,
         email: rawEmail,
         passwordHash: passwordHash
       });
 
-      // 13. Display success message & redirect to index.html after short delay
+      // Display success message & redirect to index.html after short delay
       AlertUI.show(
         alertEl, 
         'Account created successfully! Your password was hashed with SHA-256. Redirecting to login...', 
@@ -514,7 +601,6 @@ function initRegistrationPage() {
       }, AUTH_CONFIG.REDIRECT_DELAY_MS);
 
     } catch (err) {
-      // 14. Handle storage errors and hashing failures gracefully
       console.error('AuthVault Registration Error:', err);
       AlertUI.show(alertEl, err.message || 'An unexpected error occurred during registration.', 'error');
       submitBtn.classList.remove('is-loading');
@@ -524,11 +610,17 @@ function initRegistrationPage() {
 }
 
 /* ==========================================================================
-   8. Login Page Controller (Prepared & Structured for Part 2)
+   9. Login Page Controller (Part 2 Core Authentication Flow)
    ========================================================================== */
 function initLoginPage() {
   const form = document.getElementById('loginForm');
   if (!form) return; // Not on login page
+
+  // If already authenticated in this session, auto-redirect to dashboard
+  if (SessionManager.isAuthenticated()) {
+    window.location.replace('dashboard.html');
+    return;
+  }
 
   const alertEl = document.getElementById('authAlert');
   const identifierInput = document.getElementById('loginIdentifier');
@@ -538,69 +630,93 @@ function initLoginPage() {
   // Setup password visibility toggle
   setupPasswordToggle('toggleLoginPasswordBtn', 'loginPassword');
 
+  // Clear alerts upon user input
+  if (identifierInput) {
+    identifierInput.addEventListener('input', () => AlertUI.hide(alertEl));
+  }
+  if (passwordInput) {
+    passwordInput.addEventListener('input', () => AlertUI.hide(alertEl));
+  }
+
+  // Handle Login Form Submission
   form.addEventListener('submit', async (e) => {
+    // Prevent credentials from leaking in URL or triggering browser form reload
     e.preventDefault();
+
     AlertUI.hide(alertEl);
 
     const identifier = (identifierInput ? identifierInput.value : '').trim();
     const password = (passwordInput ? passwordInput.value : '');
 
+    // Requirement: Reject empty username/email or password fields
     if (!identifier || !password) {
-      AlertUI.show(alertEl, 'Please enter both your identifier (username or email) and password.', 'error');
+      AlertUI.show(alertEl, 'Please enter both your username/email and password.', 'error');
       return;
     }
 
-    // In Part 1, we show a helpful notification informing the user that Part 1 registration is complete
-    // and Part 2 will connect the login verification and dashboard authentication flow.
-    // However, we can also check if the user exists to demonstrate the stored hash matching architecture!
+    // Requirement: Prevent repeated button submissions while authentication is processing
     submitBtn.classList.add('is-loading');
     submitBtn.disabled = true;
 
     try {
-      const passwordHash = await CryptoUtils.hashPassword(password);
-      const users = AuthStorage.getUsers();
-      const normalizedId = identifier.toLowerCase();
+      // 1. Hash the submitted password using the same SHA-256 Web Crypto method
+      const submittedHash = await CryptoUtils.hashPassword(password);
 
-      const matchedUser = users.find(u => 
-        (u.username.toLowerCase() === normalizedId || u.email.toLowerCase() === normalizedId) &&
-        u.passwordHash === passwordHash
-      );
+      // 2. Perform realistic asynchronous processing delay
+      await new Promise(resolve => setTimeout(resolve, AUTH_CONFIG.AUTH_PROCESSING_DELAY_MS));
 
-      setTimeout(() => {
+      // 3. Read existing accounts from localStorage (authVaultUsers)
+      // 4. Perform case-insensitive username or email lookup
+      const matchedUser = AuthStorage.findUserByIdentifier(identifier);
+
+      // 5. Compare resulting hash against stored password hash
+      const isPasswordValid = matchedUser && matchedUser.passwordHash === submittedHash;
+
+      if (!matchedUser || !isPasswordValid) {
+        // Requirement: Display the exact same generic message without revealing which credential was wrong
+        AlertUI.show(alertEl, 'Invalid username/email or password.', 'error');
         submitBtn.classList.remove('is-loading');
         submitBtn.disabled = false;
+        return;
+      }
 
-        if (matchedUser) {
-          AlertUI.show(
-            alertEl, 
-            `Credentials verified! Welcome, ${matchedUser.username}. (Part 2 will activate full session persistence and route authentication).`, 
-            'success'
-          );
-        } else {
-          AlertUI.show(alertEl, 'Invalid username/email or password. Please verify your credentials or register a new account.', 'error');
-        }
+      // 6. Successful authentication: establish active session in sessionStorage
+      SessionManager.createSession({
+        username: matchedUser.username,
+        email: matchedUser.email
+      });
+
+      // Show success feedback
+      AlertUI.show(alertEl, 'Authentication successful! Redirecting to dashboard...', 'success');
+
+      // 7. Redirect to dashboard.html
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
       }, 600);
 
     } catch (err) {
+      console.error('AuthVault Login Error:', err);
+      // Graceful error message without crashing
+      AlertUI.show(alertEl, 'An unexpected error occurred during authentication. Please try again.', 'error');
       submitBtn.classList.remove('is-loading');
       submitBtn.disabled = false;
-      AlertUI.show(alertEl, err.message || 'An error occurred during authentication check.', 'error');
     }
   });
 }
 
 /* ==========================================================================
-   9. Application Initialization
+   10. Application Initialization
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
   initRegistrationPage();
   initLoginPage();
 });
 
-// Expose modules to window for modular testing and Part 2 & 3 consumption
+// Expose modules to window for modular testing and Part 3 validation
 window.AuthVault = {
   CryptoUtils,
   AuthStorage,
+  SessionManager,
   AuthValidator,
   AlertUI,
   CONFIG: AUTH_CONFIG

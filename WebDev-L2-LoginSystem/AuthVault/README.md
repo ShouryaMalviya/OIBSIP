@@ -1,10 +1,10 @@
 # AuthVault — Secure Authentication System
-## Part 1: Project Architecture, Registration Engine & Cryptographic Hashing
+## Part 2: Login Engine, Session Lifecycle & Protected Dashboard
 
 AuthVault is a modern, responsive client-side authentication system built with vanilla web technologies and designed with a bespoke maroon and burgundy aesthetic.
 
-> **Project Phase:** Part 1 of 3  
-> **Tech Stack:** HTML5, CSS3 (Vanilla Design System), JavaScript (ES6+ Vanilla), Browser `localStorage`, and native Web Crypto API (`crypto.subtle`).  
+> **Project Phase:** Part 2 of 3  
+> **Tech Stack:** HTML5, CSS3 (Vanilla Design System), JavaScript (ES6+ Vanilla), Browser `localStorage`, `sessionStorage`, and native Web Crypto API (`crypto.subtle`).  
 > **No External Frameworks:** Pure vanilla implementation without React, TypeScript, Tailwind, Bootstrap, or build dependencies.
 
 ---
@@ -13,126 +13,91 @@ AuthVault is a modern, responsive client-side authentication system built with v
 
 ```
 AuthVault/
-├── index.html          # Login portal page & entry point
-├── register.html       # Account creation & client-side registration engine
-├── dashboard.html      # Protected user dashboard foundation (wired in Part 2)
+├── index.html          # Login portal page & entry point (Part 2 active)
+├── register.html       # Account creation & client-side registration engine (Part 1 active)
+├── dashboard.html      # Protected user dashboard with session verification guard (Part 2 active)
 ├── css/
 │   └── style.css       # Unified design system, CSS variables & animations
 ├── js/
-│   ├── auth.js         # Cryptographic hashing, validation & registration controller
-│   └── dashboard.js    # Dashboard inspection & metric loading foundation
+│   ├── auth.js         # Cryptographic hashing, validation, session & login controllers
+│   └── dashboard.js    # Protected dashboard session verification & logout handler
 └── README.md           # Architecture, testing checklist & security documentation
 ```
 
 ---
 
-## 2. Design System & Palette
+## 2. Part 2 Architecture & Enhancements
 
-AuthVault implements a bespoke dark maroon and burgundy visual identity featuring subtle ambient gradients, restrained glassmorphism, and responsive form components.
+### Feature 1: Login Portal (`index.html`)
+- Built using the same glassmorphism card, typography, and maroon aesthetic as `register.html`.
+- Allows authentication via either **username** or **email address**.
+- Real-time password visibility toggle.
+- Asynchronous loading state on submission button with animated spinner.
+- Accessible error area using `textContent` for dynamic feedback.
 
-### CSS Custom Properties (`css/style.css`):
-```css
-:root {
-  --bg-primary: #10090D;
-  --bg-secondary: #240A14;
-  --maroon-dark: #4A0E24;
-  --maroon-primary: #800F2F;
-  --maroon-hover: #A4133C;
-  --crimson: #C9184A;
-  --accent-pink: #FF4D6D;
-  --blush: #FFB3C1;
-  --text-primary: #FFF0F3;
-  --text-secondary: #C9A0AA;
-}
-```
+### Feature 2: Credential Verification (`js/auth.js`)
+- Rejects empty submissions before processing.
+- Performs case-insensitive matching (`.toLowerCase()`) against accounts stored in `localStorage['authVaultUsers']`.
+- Computes SHA-256 hash using the native browser **Web Crypto API** (`crypto.subtle.digest`).
+- Compares computed hash directly against stored password hash.
+- **Uniform Error Handling:** If credentials fail or account is missing, displays the identical message:
+  `"Invalid username/email or password."`  
+  *(Eliminates user enumeration vectors).*
 
-### Visual Highlights:
-- **Atmospheric Depth:** Multi-layered radial gradients combined with animated ambient background orbs.
-- **Glassmorphism:** Restrained translucent cards with `backdrop-filter: blur(20px)` and subtle burgundy borders.
-- **Accessible Form Controls:** High-contrast labels, clear `:focus-visible` rings, and inline SVG input icons.
-- **Interactive Micro-Animations:** Gradient buttons with hover elevations, smooth password visibility transitions, and real-time password criteria indicators.
-
----
-
-## 3. Cryptographic Implementation (Web Crypto API)
-
-AuthVault uses the browser's native **Web Crypto API** (`window.crypto.subtle.digest`) to hash passwords client-side using **SHA-256** before persisting records to `localStorage`.
-
-### Hashing Workflow (`js/auth.js`):
-1. **UTF-8 Encoding:** The plaintext password is converted into a `Uint8Array` buffer via `TextEncoder`.
-2. **Digest Generation:** `crypto.subtle.digest('SHA-256', data)` produces an `ArrayBuffer` digest.
-3. **Hex Representation:** The buffer is converted to a 64-character hexadecimal string.
-4. **Zero Plaintext Persistence:** Plaintext passwords are never saved to disk, logged, or serialized.
-
-```javascript
-async function hashPassword(plaintext) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(plaintext);
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-}
-```
-
----
-
-## 4. LocalStorage Schema
-
-User records are stored under the standardized key **`authVaultUsers`**.
-
-```json
-[
+### Feature 3: Active Session Management (`sessionStorage: authVaultSession`)
+- Upon successful authentication, creates an isolated session in `sessionStorage` under the key:
+  **`authVaultSession`**
+- **Zero Plaintext / Zero Hashes:** Contains only the minimum required metadata:
+  ```json
   {
-    "id": "usr_k8f9a2b",
     "username": "alex_rivera",
     "email": "alex@example.com",
-    "passwordHash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-    "createdAt": "2026-10-18T00:15:30.120Z"
+    "loggedInAt": "2026-10-18T00:25:00.000Z"
   }
-]
-```
+  ```
+- Persisted only in the active browser tab/session (destroyed when tab or browser closes).
 
-### Uniqueness Enforcement:
-- **Username:** Case-insensitive match check (`existing.username.toLowerCase() === input.toLowerCase()`).
-- **Email:** Case-insensitive match check (`existing.email.toLowerCase() === input.toLowerCase()`).
+### Feature 4: Protected Dashboard & Route Guards (`dashboard.html` & `js/dashboard.js`)
+- Gated visibility: Dashboard wrapper is completely hidden by default until `js/dashboard.js` validates `sessionStorage['authVaultSession']`.
+- If no session exists: Immediately redirects to `index.html` via `window.location.replace` without flashing protected content.
+- If session exists: Renders dashboard, displaying personalized welcome message, username, email, and session timestamp strictly via `textContent`.
+- Active authentication indicator badge with pulsating emerald glow.
+
+### Feature 5: Secure Sign-Out Flow
+- Clicking **Sign Out**:
+  1. Purges `authVaultSession` from `sessionStorage`.
+  2. Replaces history entry and redirects to `index.html`.
+  3. Guards against browser Back/Forward Cache (`pageshow` event with `event.persisted`) so ordinary browser navigation cannot reopen the dashboard without logging in again.
 
 ---
 
-## 5. Security Architecture & Educational Disclosure
+## 3. Security Architecture & Educational Disclosure
 
 > **Educational Project Scope:**  
 > This project is designed for demonstration and educational purposes.  
 > 
 > - **Client-Side Hashing Limitations:** While SHA-256 prevents plaintext storage in `localStorage`, SHA-256 is a general-purpose cryptographic hash function that is extremely fast on GPUs and ASICs. In a production environment, password authentication must occur server-side using slow, memory-hard, salted algorithms such as **Argon2id**, **bcrypt**, or **PBKDF2**.
-> - **Client-Side Storage:** Browser `localStorage` is accessible to scripts executing in the same origin. Production systems rely on secure, HttpOnly, SameSite cookies and transport layer security (TLS/HTTPS).
-> - **XSS Prevention:** All dynamic messages and validation errors are rendered strictly via `element.textContent`, preventing DOM-based cross-site scripting (XSS). `eval()` is strictly prohibited.
-> - **URL Safety:** Form submission defaults are intercepted with `event.preventDefault()`, ensuring passwords and hashes never leak into browser history or URL query parameters.
+> - **Client-Side Storage:** Browser `sessionStorage` and `localStorage` can be viewed or modified by anyone with access to developer tools. Client-side route guards demonstrate application state flow, not a cryptographically enforced authorization boundary. Production systems require secure, `HttpOnly`, `SameSite` cookies and TLS.
+> - **XSS Immunity:** Untrusted inputs and error messages are rendered exclusively via `element.textContent`, preventing DOM-based cross-site scripting (XSS). `eval()` is strictly prohibited.
+> - **URL Safety:** Form submissions intercept default behavior with `event.preventDefault()`, ensuring credentials never leak into URL queries or browser history.
 
 ---
 
-## 6. Verification and Testing Checklist
+## 4. Part 2 Verification and Testing Checklist
 
-To test Part 1 functionality, open `register.html` in any modern web browser:
-
-| # | Test Scenario | Input Data | Expected Outcome |
+| # | Test Scenario | Steps | Expected Outcome |
 |---|---|---|---|
-| **1** | **Empty Form Submission** | Click "Create Account" with blank inputs | Submission is blocked. Error messages indicate required fields. |
-| **2** | **Invalid Email Format** | Username: `testuser`<br>Email: `invalid-email`<br>Password: `Pass1234` | Submission is blocked. Email field highlights with error: "Please enter a valid email address". |
-| **3** | **Short Password** | Password: `Pass1` (< 8 characters) | Checklist indicator highlights incomplete length. Error: "Password must be at least 8 characters." |
-| **4** | **Password Without Number** | Password: `PasswordOnly` | Checklist indicates missing digit. Error: "Password must contain at least one numeric digit (0-9)." |
-| **5** | **Mismatched Confirmation** | Password: `SecurePass1`<br>Confirm: `SecurePass2` | Error: "Passwords do not match. Please re-enter." |
-| **6** | **Duplicate Account (Case-Insensitive)** | Register `AlexRivera`<br>Then attempt `alexrivera` or same email | Registration rejected with "This username is already taken" or duplicate email notice. |
-| **7** | **Successful Registration** | Username: `alex_rivera`<br>Email: `alex@example.com`<br>Password: `VaultSecret1` | Real-time criteria met. Loading spinner activates. SHA-256 hash generated and stored in `localStorage['authVaultUsers']`. Success alert displays, then redirects to `index.html`. |
-| **8** | **Show/Hide Password Controls** | Click eye toggle on password fields | Toggles input type between `password` and `text`, updating accessible `aria-label` and SVG icon. |
+| **1** | **Empty Login Submission** | Click "Sign In" with empty inputs | Blocked. Alert: "Please enter both your username/email and password." |
+| **2** | **Invalid Credentials (Generic)** | Enter un registered user or wrong password | Spinner activates, then displays uniform generic error: "Invalid username/email or password." |
+| **3** | **Login via Username** | Enter registered username + correct password | Authenticates, establishes session in `sessionStorage['authVaultSession']`, redirects to `dashboard.html`. |
+| **4** | **Login via Email** | Enter registered email + correct password | Authenticates successfully and redirects to `dashboard.html`. |
+| **5** | **Case-Insensitive Login** | Enter username in uppercase (e.g. `ALEX_RIVERA`) | Successfully matches and authenticates. |
+| **6** | **Protected Route Guard** | Clear session or open `dashboard.html` directly in private window | Immediately redirects to `index.html` without showing protected data. |
+| **7** | **Protected Data Rendering** | Inspect dashboard after login | Displays authenticated username and email safely using `textContent`. Active session indicator pulses green. |
+| **8** | **Sign Out** | Click "Sign Out" in dashboard | Session is removed from `sessionStorage` and user is redirected to `index.html`. Back button cannot reopen dashboard. |
+| **9** | **Registration Preservation** | Open `register.html` and register a new account | Part 1 registration validation, Web Crypto SHA-256 hashing, and redirect to `index.html` work without issue. |
 
 ---
 
-## 7. Roadmap: Parts 2 & 3
-
-- **Part 2:**
-  - Login authentication engine in `js/auth.js` with SHA-256 hash comparison.
-  - Session token generation and active user state in `localStorage` (`authVaultSession`).
-  - Route guards on `dashboard.html` (redirect unauthorized visitors to `index.html`).
-  - Active profile display and secure sign-out functionality in `js/dashboard.js`.
-- **Part 3:**
-  - Advanced security metrics, password strength visual meter, session expiry timer, account management, and vault data export/wipe.
+## 5. Roadmap: Part 3
+- Final end-to-end integration polish, visual animation refinements, session expiry timers, audit logging, and final packaging.
