@@ -320,7 +320,7 @@ class CalculationEngine {
    */
   evaluate(expr) {
     if (!expr || typeof expr !== 'string' || expr.trim() === '') {
-      throw new Error('Empty expression');
+      return 0;
     }
 
     const trimmed = expr.trim();
@@ -801,6 +801,13 @@ class Calculator {
    */
   calculateResult() {
     if (this.isEvaluated) return;
+
+    // Gracefully handle empty or initial zero input
+    if (!this.currentInput || this.currentInput.trim() === '' || this.currentInput === '0') {
+      this.currentInput = '0';
+      this.updateDisplay();
+      return;
+    }
 
     try {
       // Evaluate safely through custom Tokenizer & Shunting-Yard engine
