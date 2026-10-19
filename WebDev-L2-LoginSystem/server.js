@@ -9,7 +9,11 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = process.env.PORT || 8080;
-const ROOT_DIR = __dirname;
+
+// Resolve project root reliably even if invoked from AuthVault/
+const ROOT_DIR = __dirname.endsWith('AuthVault')
+  ? path.dirname(__dirname)
+  : __dirname;
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -27,20 +31,48 @@ const server = http.createServer((req, res) => {
   // Parse incoming request URL
   let reqPath = decodeURI(req.url.split('?')[0]);
   
+  // Clean path
   if (reqPath === '/' || reqPath === '') {
-    reqPath = '/AuthVault/index.html';
+    res.writeHead(302, { 'Location': '/AuthVault/index.html' });
+    res.end();
+    return;
   }
 
-  // Resolve target absolute path within project root
+  if (reqPath === '/AuthVault' || reqPath === '/AuthVault/') {
+    res.writeHead(302, { 'Location': '/AuthVault/index.html' });
+    res.end();
+    return;
+  }
+
+  // 1. First attempt: resolve directly from ROOT_DIR
   let filePath = path.join(ROOT_DIR, reqPath);
+
+  // 2. Fallback: check inside AuthVault/ folder
+  if (!fs.existsSync(filePath)) {
+    const authVaultFallback = path.join(ROOT_DIR, 'AuthVault', reqPath);
+    if (fs.existsSync(authVaultFallback)) {
+      filePath = authVaultFallback;
+    }
+  }
+
+  // 3. Fallback: if requested path starts with /AuthVault/ but file is at root
+  if (!fs.existsSync(filePath) && reqPath.startsWith('/AuthVault/')) {
+    const strippedPath = path.join(ROOT_DIR, reqPath.replace('/AuthVault/', '/'));
+    if (fs.existsSync(strippedPath)) {
+      filePath = strippedPath;
+    }
+  }
 
   // If path is a directory, look for index.html
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, 'index.html');
   }
 
-  // Prevent directory traversal outside root
-  if (!filePath.startsWith(ROOT_DIR)) {
+  // Prevent directory traversal outside root (case-insensitive for Windows)
+  const resolvedPath = path.resolve(filePath).toLowerCase();
+  const resolvedRoot = path.resolve(ROOT_DIR).toLowerCase();
+
+  if (!resolvedPath.startsWith(resolvedRoot)) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('403 Forbidden: Directory traversal prevented.');
     return;

@@ -2,14 +2,152 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=AuthVault/index.html">
-  <title>AuthVault — Redirecting</title>
-  <script>
-    window.location.href = "AuthVault/index.html";
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AuthVault — Secure client-side authentication portal with SHA-256 Web Crypto hashing.">
+  <title>Sign In — AuthVault</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23C9184A%22><path d=%22M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.5 1.1 2.5 2.5V11h1c.55 0 1 .45 1 1v5c0 .55-.45 1-1 1H8.5c-.55 0-1-.45-1-1v-5c0-.55.45-1 1-1h1V9.5C9.5 8.1 10.6 7 12 7zm0 2c-.28 0-.5.22-.5.5V11h1V9.5c0-.28-.22-.5-.5-.5z%22/></svg>">
 </head>
-<body style="background-color: #10090D; color: #FFF0F3; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-  <p>Redirecting to <a href="AuthVault/index.html" style="color: #FF4D6D;">AuthVault Portal</a>...</p>
-</body>
+<body>
+  <!-- Ambient Burgundy Background Gradients -->
+  <div class="bg-ambient" aria-hidden="true"></div>
+  <div class="bg-grid-overlay" aria-hidden="true"></div>
 
+  <main class="auth-wrapper">
+    <div class="auth-container">
+      
+      <!-- Brand Logo / Wordmark -->
+      <header class="brand-header">
+        <a href="index.html" class="brand-logo" aria-label="AuthVault Home">
+          <div class="brand-icon-wrapper" aria-hidden="true">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <span class="brand-title">AuthVault</span>
+          <span class="brand-badge">Demo</span>
+        </a>
+      </header>
+
+      <!-- Login Card -->
+      <section class="auth-card" aria-labelledby="login-heading">
+        <div class="auth-card-header">
+          <h1 id="login-heading" class="auth-card-title">Welcome Back</h1>
+          <p class="auth-card-subtitle">Sign in to your AuthVault account to access your secured dashboard.</p>
+        </div>
+
+        <!-- Dedicated Accessible Alert & Validation Message Area -->
+        <div id="authAlert" class="alert-box" role="alert" aria-live="polite">
+          <svg class="alert-icon" id="alertIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div class="alert-content">
+            <span id="alertMessage" class="alert-message"></span>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form" novalidate>
+          
+          <!-- Username / Email Input Field -->
+          <div class="form-group">
+            <label for="loginIdentifier" class="form-label">
+              <span>Username or Email</span>
+            </label>
+            <div class="input-wrapper">
+              <svg class="input-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input 
+                type="text" 
+                id="loginIdentifier" 
+                name="identifier" 
+                class="form-input" 
+                placeholder="Enter username or email" 
+                autocomplete="username" 
+                required 
+                aria-required="true"
+              >
+            </div>
+          </div>
+
+          <!-- Password Input Field -->
+          <div class="form-group">
+            <label for="loginPassword" class="form-label">
+              <span>Password</span>
+            </label>
+            <div class="input-wrapper has-toggle">
+              <svg class="input-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input 
+                type="password" 
+                id="loginPassword" 
+                name="password" 
+                class="form-input" 
+                placeholder="Enter your password" 
+                autocomplete="current-password" 
+                required 
+                aria-required="true"
+              >
+              <button 
+                type="button" 
+                id="toggleLoginPasswordBtn" 
+                class="password-toggle-btn" 
+                aria-label="Show password"
+                title="Show password"
+              >
+                <svg class="toggle-icon icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="toggle-icon icon-eye-off" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sign In Action Button -->
+          <button type="submit" id="loginSubmitBtn" class="btn btn-primary">
+            <span class="btn-spinner" aria-hidden="true"></span>
+            <span class="btn-text">Sign In</span>
+          </button>
+        </form>
+
+        <!-- Card Footer with Register Navigation Link -->
+        <footer class="card-footer">
+          <span>New to AuthVault?</span>
+          <a href="register.html" class="card-link" id="registerLink">Create an account</a>
+        </footer>
+      </section>
+
+      <!-- Educational Security Disclaimer Box -->
+      <aside class="security-disclaimer" aria-label="Security Notice">
+        <svg class="security-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <div>
+          <strong>Educational Demonstration:</strong> Authentication compares cryptographic SHA-256 digests against records in <code>localStorage</code>. Successful logins establish an active session in <code>sessionStorage</code> (<code>authVaultSession</code>). Client-side checks illustrate application authentication flows and are not secure authorization boundaries against deliberate developer console modifications.
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>AuthVault &copy; 2026 &mdash; Built with Modern Vanilla Web Standards.</p>
+  </footer>
+
+  <!-- External Script -->
+  <script src="js/auth.js"></script>
+</body>
 </html>

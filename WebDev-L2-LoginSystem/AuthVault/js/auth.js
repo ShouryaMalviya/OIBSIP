@@ -616,18 +616,23 @@ function initLoginPage() {
   const form = document.getElementById('loginForm');
   if (!form) return; // Not on login page
 
-  // If already authenticated in this session, auto-redirect to dashboard
-  if (SessionManager.isAuthenticated()) {
-    window.location.replace('dashboard.html');
-    return;
-  }
-
   const alertEl = document.getElementById('authAlert');
   const identifierInput = document.getElementById('loginIdentifier');
   const passwordInput = document.getElementById('loginPassword');
   const submitBtn = document.getElementById('loginSubmitBtn');
 
+  // If already authenticated in this session, inform user while keeping login accessible
+  const activeSession = SessionManager.getSession();
+  if (activeSession && alertEl) {
+    AlertUI.show(
+      alertEl, 
+      `Active session detected for "${activeSession.username}". Sign in below to switch accounts or visit your dashboard.`, 
+      'info'
+    );
+  }
+
   // Setup password visibility toggle
+
   setupPasswordToggle('toggleLoginPasswordBtn', 'loginPassword');
 
   // Clear alerts upon user input
