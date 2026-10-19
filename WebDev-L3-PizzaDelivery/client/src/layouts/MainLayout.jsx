@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import CartDrawer from '../components/cart/CartDrawer';
 
 export const MainLayout = ({ children }) => {
   return (
@@ -10,6 +11,7 @@ export const MainLayout = ({ children }) => {
         {children}
       </main>
       <Footer />
+      <CartDrawer />
     </div>
   );
 };

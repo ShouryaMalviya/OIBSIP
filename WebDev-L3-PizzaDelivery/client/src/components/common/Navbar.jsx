@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import {
   Pizza,
   Menu as MenuIcon,
@@ -9,13 +10,14 @@ import {
   LogOut,
   ChevronDown,
   Sparkles,
-  ShieldAlert,
+  ShoppingBag,
 } from 'lucide-react';
 import Button from './Button';
 import Badge from './Badge';
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const { itemsCount, openDrawer } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ export const Navbar = () => {
   const navLinks = [
     { label: 'Home', path: '/' },
     { label: 'Artisanal Menu', path: '/menu' },
-    { label: 'Pizza Builder', path: '/builder', badge: 'Part 2' },
+    { label: 'Custom Builder', path: '/builder' },
   ];
 
   return (
@@ -72,17 +74,28 @@ export const Navbar = () => {
                 }
               >
                 <span>{link.label}</span>
-                {link.badge && (
-                  <span className="bg-[#DBE64C] text-[#001F3F] text-[10px] font-black px-1.5 py-0.2 rounded-full uppercase">
-                    {link.badge}
-                  </span>
-                )}
               </NavLink>
             ))}
           </nav>
 
-          {/* Desktop Auth State / Action Buttons */}
+          {/* Desktop Right Actions: Cart & Auth */}
           <div className="hidden md:flex items-center space-x-3">
+            
+            {/* Interactive Cart Button */}
+            <button
+              onClick={openDrawer}
+              className="relative flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/15 px-3.5 py-2 rounded-full text-sm font-semibold text-white transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#DBE64C]"
+              aria-label="Open cart"
+            >
+              <ShoppingBag className="w-4 h-4 text-[#DBE64C]" />
+              <span>Cart</span>
+              {itemsCount > 0 && (
+                <span className="bg-[#00804C] text-white text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-xs">
+                  {itemsCount}
+                </span>
+              )}
+            </button>
+
             {isAuthenticated ? (
               <div className="relative">
                 <button
@@ -131,6 +144,14 @@ export const Navbar = () => {
                           <UserIcon className="w-4 h-4 text-slate-400" />
                           <span>My Account Profile</span>
                         </Link>
+                        <Link
+                          to="/cart"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#00804C] transition-colors"
+                        >
+                          <ShoppingBag className="w-4 h-4 text-slate-400" />
+                          <span>My Cart ({itemsCount})</span>
+                        </Link>
                       </div>
 
                       <div className="pt-1 border-t border-slate-100">
@@ -168,8 +189,21 @@ export const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile menu hamburger toggle */}
-          <div className="flex md:hidden">
+          {/* Mobile Right Bar: Cart Icon & Hamburger Toggle */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={openDrawer}
+              className="relative p-2 rounded-xl text-white hover:bg-white/10 focus:outline-none"
+              aria-label="Open cart"
+            >
+              <ShoppingBag className="w-6 h-6 text-[#DBE64C]" />
+              {itemsCount > 0 && (
+                <span className="absolute top-1 right-1 bg-[#00804C] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                  {itemsCount}
+                </span>
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -195,13 +229,18 @@ export const Navbar = () => {
                 className="px-3 py-2.5 rounded-xl text-base font-semibold text-white/90 hover:text-white hover:bg-white/10 flex items-center justify-between"
               >
                 <span>{link.label}</span>
-                {link.badge && (
-                  <span className="bg-[#DBE64C] text-[#001F3F] text-[10px] font-black px-2 py-0.5 rounded-full">
-                    {link.badge}
-                  </span>
-                )}
               </Link>
             ))}
+            <Link
+              to="/cart"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2.5 rounded-xl text-base font-semibold text-[#DBE64C] hover:bg-white/10 flex items-center justify-between"
+            >
+              <span>Shopping Cart</span>
+              <span className="bg-[#00804C] text-white text-xs font-black px-2 py-0.5 rounded-full">
+                {itemsCount}
+              </span>
+            </Link>
           </div>
 
           <div className="pt-3 border-t border-white/15">

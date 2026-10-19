@@ -1,14 +1,19 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Filter, Sparkles, SlidersHorizontal, Leaf, Flame } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Search, Filter, Sparkles, SlidersHorizontal, Leaf, Flame, AlertCircle, RefreshCw } from 'lucide-react';
 import PizzaCard from '../components/pizza/PizzaCard';
 import PizzaDetailModal from '../components/pizza/PizzaDetailModal';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
-import { FEATURED_PIZZAS } from '../data/pizzas';
+import SkeletonCard from '../components/common/SkeletonLoader';
+import pizzaService from '../services/pizza.service';
 import { useNavigate } from 'react-router-dom';
 
 export const Menu = () => {
   const navigate = useNavigate();
+  const [pizzas, setPizzas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
@@ -16,33 +21,54 @@ export const Menu = () => {
   const [spicyOnly, setSpicyOnly] = useState(false);
   const [selectedPizza, setSelectedPizza] = useState(null);
 
-  const categories = ['All', 'Classic', 'Artisanal', 'Signature'];
+  const categories = ['All', 'Classic', 'Veg Feast', 'Artisanal', 'Signature', 'Spicy'];
+
+  const fetchPizzas = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await pizzaService.getPizzas();
+      if (res?.data?.pizzas) {
+        setPizzas(res.data.pizzas);
+      }
+    } catch (err) {
+      console.error('Failed to load pizzas:', err);
+      setError('Failed to load menu pizzas. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPizzas();
+  }, []);
 
   const filteredPizzas = useMemo(() => {
-    return FEATURED_PIZZAS.filter((p) => {
-      // Category filter
-      if (selectedCategory !== 'All' && p.category !== selectedCategory) {
-        return false;
-      }
-      // Dietary filters
-      if (vegOnly && !p.isVegetarian) return false;
-      if (spicyOnly && !p.isSpicy) return false;
-      // Search query
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const matchesName = p.name.toLowerCase().includes(query);
-        const matchesDesc = p.description.toLowerCase().includes(query);
-        const matchesIngredient = p.ingredients.some((ing) => ing.toLowerCase().includes(query));
-        if (!matchesName && !matchesDesc && !matchesIngredient) return false;
-      }
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === 'price-low') return a.price - b.price;
-      if (sortBy === 'price-high') return b.price - a.price;
-      if (sortBy === 'rating') return b.rating - a.rating;
-      return 0; // Default featured order
-    });
-  }, [selectedCategory, searchQuery, sortBy, vegOnly, spicyOnly]);
+    return pizzas
+      .filter((p) => {
+        // Category filter
+        if (selectedCategory !== 'All' && p.category !== selectedCategory) {
+          return false;
+        }
+        // Dietary filters
+        if (vegOnly && !p.isVegetarian) return false;
+        if (spicyOnly && !p.isSpicy) return false;
+        // Search query
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          const matchesName = p.name?.toLowerCase().includes(q);
+          const matchesDesc = p.description?.toLowerCase().includes(q);
+          const matchesIng = (p.ingredients || []).some((ing) => ing.toLowerCase().includes(q));
+          if (!matchesName && !matchesDesc && !matchesIng) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'price-low') return a.basePricePaise - b.basePricePaise;
+        if (sortBy === 'price-high') return b.basePricePaise - a.basePricePaise;
+        return 0; // Default featured order
+      });
+  }, [pizzas, selectedCategory, searchQuery, sortBy, vegOnly, spicyOnly]);
 
   return (
     <div className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -62,24 +88,24 @@ export const Menu = () => {
         </div>
 
         {/* Builder teaser banner */}
-        <div className="mt-6 pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs sm:text-sm text-[#DBE64C] font-semibold">
             <Sparkles className="w-4 h-4 shrink-0" />
-            <span>Want to create your own bespoke pie? Interactive Crust & Topping Builder debuts in Part 2!</span>
+            <span>Looking for something bespoke? Craft your custom pizza with our 4-step interactive builder!</span>
           </div>
           <Button
             variant="accent"
             size="sm"
             onClick={() => navigate('/builder')}
-            className="self-start sm:self-auto"
+            className="self-start sm:self-auto shadow-sm"
           >
-            Preview Builder
+            Launch Pizza Builder
           </Button>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs space-y-4">
+      <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
         <div className="flex flex-col lg:flex-row gap-4 justify-between items-center">
           
           {/* Category Tabs */}
@@ -107,7 +133,7 @@ export const Menu = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search pizzas or ingredients..."
-              className="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00804C] focus:bg-white text-[#001F3F]"
+              className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00804C] focus:bg-white text-[#001F3F]"
             />
           </div>
 
@@ -153,14 +179,33 @@ export const Menu = () => {
               <option value="featured">Featured Chef Selection</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
-              <option value="rating">Highest Connoisseur Rating</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Pizza Grid */}
-      {filteredPizzas.length > 0 ? (
+      {/* Error state */}
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center justify-between text-xs text-red-800">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{error}</span>
+          </div>
+          <Button variant="ghost" size="sm" onClick={fetchPizzas} icon={RefreshCw}>
+            Retry
+          </Button>
+        </div>
+      )}
+
+      {/* Loading Skeletons */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <SkeletonCard key={n} />
+          ))}
+        </div>
+      ) : filteredPizzas.length > 0 ? (
+        /* Pizza Grid */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPizzas.map((pizza) => (
             <PizzaCard
@@ -171,14 +216,14 @@ export const Menu = () => {
           ))}
         </div>
       ) : (
-        /* Empty State */
+        /* Empty Filter State */
         <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 max-w-md mx-auto my-12 space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-[#F6F7ED] text-[#001F3F] flex items-center justify-center mx-auto text-2xl font-bold">
             🍕
           </div>
-          <h3 className="text-xl font-bold text-[#001F3F]">No Pizzas Match Your Filter</h3>
+          <h3 className="text-xl font-bold text-[#001F3F]">No Pizzas Found</h3>
           <p className="text-xs text-slate-500">
-            We couldn't find any artisanal pizzas matching "{searchQuery}" with current dietary selections.
+            We couldn't find any pizzas matching your current filters or search term.
           </p>
           <Button
             variant="outline"
@@ -190,7 +235,7 @@ export const Menu = () => {
               setSpicyOnly(false);
             }}
           >
-            Clear All Filters
+            Reset Filters
           </Button>
         </div>
       )}

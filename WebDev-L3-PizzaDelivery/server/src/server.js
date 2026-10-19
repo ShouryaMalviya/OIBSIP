@@ -2,6 +2,7 @@ import app from './app.js';
 import { env } from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
 import { initMailer } from './config/mail.js';
+import { seedInitialData } from './scripts/seed.js';
 
 const startServer = async () => {
   try {
@@ -12,8 +13,12 @@ const startServer = async () => {
     // 1. Connect to Database
     await connectDB();
 
-    // 2. Initialize Mailer Transporter
+    // 2. Seed Initial Catalog Data (Pizzas & Ingredients)
+    await seedInitialData();
+
+    // 3. Initialize Mailer Transporter
     await initMailer();
+
 
     // 3. Start listening on configured port
     const server = app.listen(env.PORT, () => {

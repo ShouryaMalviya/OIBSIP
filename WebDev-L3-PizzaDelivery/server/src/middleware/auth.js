@@ -71,3 +71,33 @@ export const authorize = (...roles) => {
     next();
   };
 };
+
+/**
+ * Middleware that optionally attaches authenticated user if valid token exists,
+ * but allows unauthenticated guest requests to proceed.
+ */
+export const optionalAuthenticate = async (req, res, next) => {
+  try {
+    let token = null;
+
+    if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (token) {
+      const decoded = jwt.verify(token, env.JWT_SECRET);
+      if (decoded && decoded.userId) {
+        const user = await User.findById(decoded.userId);
+        if (user) {
+          req.user = user;
+        }
+      }
+    }
+  } catch (err) {
+    // Ignore invalid tokens for optional authentication
+  }
+  next();
+};
+
