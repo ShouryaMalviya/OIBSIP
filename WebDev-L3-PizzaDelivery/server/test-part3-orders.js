@@ -33,8 +33,8 @@ async function runPart3Tests() {
     // 1. Health check
     const healthRes = await axios.get(`${BASE_URL}/health`);
     assert(
-      healthRes.status === 200 && healthRes.data.version.includes('Part 3'),
-      `Health check reports Part 3 version: "${healthRes.data.version}"`
+      healthRes.status === 200 && (healthRes.data.version.includes('Part 3') || healthRes.data.version.includes('Part 4') || healthRes.data.version.includes('Part 5')),
+      `Health check reports valid version: "${healthRes.data.version}"`
     );
 
     // 2. Register, verify & login customer A

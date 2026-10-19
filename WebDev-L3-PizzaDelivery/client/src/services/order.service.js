@@ -40,6 +40,14 @@ export const orderService = {
     const response = await api.post(`/orders/${orderId}/cancel`, { reason });
     return response.data;
   },
+
+  /**
+   * Authoritative tracking status for polling fallback
+   */
+  async getTrackingStatus(orderId) {
+    const response = await api.get(`/tracking/${orderId}`);
+    return response.data;
+  },
 };
 
 /**

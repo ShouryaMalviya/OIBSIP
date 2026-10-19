@@ -206,3 +206,61 @@ export const sendPasswordResetEmail = async ({ to, name, token }) => {
 
   return info;
 };
+
+/**
+ * Send automated low-stock alert email to administration
+ */
+export const sendLowStockAlertEmail = async ({
+  to = env.ADMIN_NOTIFICATION_EMAIL,
+  itemName,
+  category,
+  currentStock,
+  threshold,
+  unit = 'portions',
+  sku,
+}) => {
+  let transporter = getMailer();
+  if (!transporter) {
+    transporter = await initMailer();
+  }
+
+  const dashboardUrl = `${env.CLIENT_URL}/admin/inventory`;
+
+  const html = getEmailTemplate({
+    title: `[ACTION REQUIRED] Low Stock Alert: ${itemName}`,
+    heading: `⚠️ Low Stock Warning: ${itemName}`,
+    bodyHtml: `
+      <p>This is an automated inventory alert from the <strong>PizzaVerse Kitchen Management System</strong>.</p>
+      <div style="background-color: #F6F7ED; border-left: 4px solid #DBE64C; padding: 16px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 4px 0;"><strong>Ingredient / Item:</strong> ${itemName} (${sku})</p>
+        <p style="margin: 4px 0;"><strong>Category:</strong> ${category.replace('_', ' ').toUpperCase()}</p>
+        <p style="margin: 4px 0; color: #b91c1c;"><strong>Current Available Stock:</strong> ${currentStock} ${unit}</p>
+        <p style="margin: 4px 0;"><strong>Threshold Level:</strong> ${threshold} ${unit}</p>
+      </div>
+      <p>Stock has breached the safety threshold. Please contact your regional suppliers or place an immediate batch restock order to prevent checkout disruption.</p>
+    `,
+    ctaText: 'Open Inventory Management',
+    ctaUrl: dashboardUrl,
+    footerNote: 'PizzaVerse Automated Warehouse Monitoring Engine. To adjust thresholds, visit the Admin Control Center.',
+  });
+
+  const mailOptions = {
+    from: env.EMAIL_FROM,
+    to,
+    subject: `⚠️ [LOW STOCK ALERT] ${itemName} is at ${currentStock} ${unit} (Threshold: ${threshold})`,
+    text: `Low Stock Warning: ${itemName} (${sku}) is down to ${currentStock} ${unit}. Configured minimum threshold is ${threshold} ${unit}. Please restock at ${dashboardUrl}.`,
+    html,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+
+  if (env.NODE_ENV === 'development') {
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+    if (previewUrl) {
+      console.log(`[MAIL] Low-stock alert preview URL: ${previewUrl}`);
+    }
+  }
+
+  return info;
+};
+

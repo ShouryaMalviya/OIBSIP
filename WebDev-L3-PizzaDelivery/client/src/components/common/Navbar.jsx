@@ -12,6 +12,7 @@ import {
   Sparkles,
   ShoppingBag,
   Receipt,
+  ShieldCheck,
 } from 'lucide-react';
 import Button from './Button';
 import Badge from './Badge';
@@ -137,6 +138,24 @@ export const Navbar = () => {
                       </div>
 
                       <div className="py-1">
+                        {user?.role === 'admin' && (
+                          <Link
+                            to="/admin"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-2 text-sm font-bold text-[#001F3F] bg-[#DBE64C]/25 hover:bg-[#DBE64C]/40 transition-colors"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-[#00804C]" />
+                            <span>Admin Dashboard</span>
+                          </Link>
+                        )}
+                        <Link
+                          to="/dashboard"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-sm font-semibold text-[#001F3F] hover:bg-slate-50 hover:text-[#00804C] transition-colors"
+                        >
+                          <Receipt className="w-4 h-4 text-[#00804C]" />
+                          <span>Customer Dashboard</span>
+                        </Link>
                         <Link
                           to="/profile"
                           onClick={() => setUserDropdownOpen(false)}

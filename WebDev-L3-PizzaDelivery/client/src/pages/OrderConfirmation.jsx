@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import orderService from '../services/order.service';
+import socketService from '../services/socket.service';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import SkeletonLoader from '../components/common/SkeletonLoader';
+import toast from 'react-hot-toast';
 import {
   CheckCircle2,
   Clock,
@@ -15,6 +17,8 @@ import {
   ChefHat,
   Bike,
   Home as HomeIcon,
+  Wifi,
+  Radio,
 } from 'lucide-react';
 import { formatINR } from '../utils/pricing';
 
@@ -23,6 +27,7 @@ export const OrderConfirmation = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
   useEffect(() => {
     let isMounted = true;
@@ -51,6 +56,37 @@ export const OrderConfirmation = () => {
     };
   }, [orderId]);
 
+  // Monitor socket connection state
+  useEffect(() => {
+    const unsub = socketService.onConnectionChange((status) => {
+      setConnectionStatus(status);
+    });
+    return unsub;
+  }, []);
+
+  // Subscribe to real-time updates for this order
+  useEffect(() => {
+    if (!orderId) return;
+
+    const unsub = socketService.subscribeToOrder(orderId, {
+      onStatusUpdated: (updatedData) => {
+        setOrder((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            orderStatus: updatedData.orderStatus || prev.orderStatus,
+            paymentStatus: updatedData.paymentStatus || prev.paymentStatus,
+            updatedAt: updatedData.updatedAt || new Date(),
+            statusHistory: updatedData.statusHistory || prev.statusHistory,
+          };
+        });
+        toast.success(`Preparation update: Status changed to ${updatedData.orderStatus.replace(/_/g, ' ').toUpperCase()}! 🍕`);
+      },
+    });
+
+    return unsub;
+  }, [orderId]);
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 space-y-6">
@@ -76,16 +112,70 @@ export const OrderConfirmation = () => {
     );
   }
 
+  const stageKeys = ['received', 'in_kitchen', 'sent_to_delivery', 'delivered'];
+  const currentStageIdx = stageKeys.indexOf(order.orderStatus);
+
   const steps = [
-    { title: 'Order Received', icon: CheckCircle2, active: true, done: true },
-    { title: 'In Kitchen Oven', icon: ChefHat, active: order.orderStatus === 'in_kitchen' || order.orderStatus === 'received', done: false },
-    { title: 'Out for Delivery', icon: Bike, active: order.orderStatus === 'sent_to_delivery', done: false },
-    { title: 'Delivered', icon: HomeIcon, active: order.orderStatus === 'delivered', done: false },
+    {
+      title: 'Order Received',
+      icon: CheckCircle2,
+      desc: 'Ticket confirmed & queued',
+      isCompleted: currentStageIdx > 0,
+      isActive: currentStageIdx === 0,
+    },
+    {
+      title: 'In Kitchen Oven',
+      icon: ChefHat,
+      desc: 'Wood-fired baking in progress',
+      isCompleted: currentStageIdx > 1,
+      isActive: currentStageIdx === 1,
+    },
+    {
+      title: 'Out for Delivery',
+      icon: Bike,
+      desc: 'Hot pie on courier route',
+      isCompleted: currentStageIdx > 2,
+      isActive: currentStageIdx === 2,
+    },
+    {
+      title: 'Delivered',
+      icon: HomeIcon,
+      desc: 'Delivered to your door',
+      isCompleted: currentStageIdx >= 3,
+      isActive: currentStageIdx === 3,
+    },
   ];
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-in fade-in">
       
+      {/* Real-Time Connection Status Indicator */}
+      <div className="flex items-center justify-between px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs shadow-2xs">
+        <div className="flex items-center gap-2">
+          {connectionStatus === 'connected' ? (
+            <>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#74C365] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00804C]"></span>
+              </span>
+              <span className="font-extrabold text-[#00804C] flex items-center gap-1">
+                <Wifi className="w-3.5 h-3.5 text-[#00804C]" /> Real-Time Socket.IO Connected
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+              <span className="font-extrabold text-amber-700 flex items-center gap-1">
+                <Radio className="w-3.5 h-3.5 text-amber-600 animate-pulse" /> Controlled Polling Active (5s Fallback)
+              </span>
+            </>
+          )}
+        </div>
+        <Link to="/dashboard" className="text-[11px] font-bold text-[#00804C] hover:underline">
+          Go to Customer Dashboard →
+        </Link>
+      </div>
+
       {/* Success Hero Header */}
       <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 text-center space-y-4 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#74C365] via-[#DBE64C] to-[#00804C]"></div>
@@ -131,27 +221,40 @@ export const OrderConfirmation = () => {
             <Clock className="w-5 h-5 text-[#00804C]" />
             <h2 className="text-lg font-black text-[#001F3F]">Live Preparation Status</h2>
           </div>
-          <Badge variant="accent" size="sm">Stage 1 of 4</Badge>
+          <Badge variant="accent" size="sm">Stage {Math.max(1, currentStageIdx + 1)} of 4</Badge>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {steps.map((st, idx) => {
             const Icon = st.icon;
+            let cardClass = 'border-slate-200 bg-[#F6F7ED] text-slate-400';
+            let iconClass = 'bg-slate-200 text-slate-500';
+            let badge = <span className="text-[9px] font-bold text-slate-400 uppercase">Pending</span>;
+
+            if (st.isCompleted) {
+              cardClass = 'border-[#74C365] bg-[#74C365]/10 text-[#001F3F]';
+              iconClass = 'bg-[#00804C] text-white';
+              badge = <span className="text-[9px] font-black text-[#00804C] uppercase">Done ✓</span>;
+            } else if (st.isActive) {
+              cardClass = 'border-[#DBE64C] bg-[#DBE64C]/25 text-[#001F3F] ring-2 ring-[#DBE64C] animate-pulse';
+              iconClass = 'bg-[#001F3F] text-[#DBE64C]';
+              badge = <span className="text-[9px] font-black text-[#001F3F] bg-[#DBE64C] px-1.5 py-0.5 rounded">Active</span>;
+            }
+
             return (
               <div
                 key={idx}
-                className={`p-4 rounded-2xl border text-center space-y-2 transition-all ${
-                  st.done
-                    ? 'border-[#00804C] bg-emerald-50/60 text-[#00804C]'
-                    : st.active
-                    ? 'border-[#DBE64C] bg-[#F6F7ED] text-[#001F3F]'
-                    : 'border-slate-100 bg-slate-50/50 text-slate-400'
-                }`}
+                className={`p-4 rounded-2xl border text-center space-y-2 transition-all ${cardClass}`}
               >
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mx-auto shadow-2xs">
+                <div className="flex justify-between items-center text-[10px]">
+                  <span className="font-bold text-slate-400">0{idx + 1}</span>
+                  {badge}
+                </div>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mx-auto shadow-2xs ${iconClass}`}>
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-extrabold block">{st.title}</span>
+                <span className="text-xs font-black block text-[#001F3F]">{st.title}</span>
+                <p className="text-[10px] text-slate-500 leading-tight">{st.desc}</p>
               </div>
             );
           })}

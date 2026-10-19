@@ -302,8 +302,11 @@ export const SAMPLE_INGREDIENTS = [
   },
 ];
 
+import { seedInitialInventory } from './seed-inventory.js';
+import { provisionAdminAccount } from './seed-admin.js';
+
 /**
- * Seed initial pizzas and ingredients if not already seeded
+ * Seed initial pizzas, ingredients, inventory items, and provision default admin
  */
 export const seedInitialData = async () => {
   try {
@@ -324,6 +327,12 @@ export const seedInitialData = async () => {
     } else {
       console.log(`[SEED] Ingredient repository already initialized (${ingredientCount} records).`);
     }
+
+    // Part 4: Seed sample inventory ledger
+    await seedInitialInventory();
+
+    // Part 4: Provision initial administrator account
+    await provisionAdminAccount();
   } catch (error) {
     console.error('[SEED ERROR] Failed to seed initial data:', error);
   }

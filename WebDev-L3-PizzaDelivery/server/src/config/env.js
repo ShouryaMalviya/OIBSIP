@@ -29,6 +29,11 @@ export const env = {
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || 'rzp_test_PVTestKey2026',
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || 'pv_sec_test_SecretKey2026',
   RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || 'pv_whsec_test_WebhookKey2026',
+  // Admin & Inventory Alerts Configuration (Part 4)
+  ADMIN_NOTIFICATION_EMAIL: process.env.ADMIN_NOTIFICATION_EMAIL || 'admin.inventory@pizzaverse.local',
+  INVENTORY_CHECK_CRON: process.env.INVENTORY_CHECK_CRON || '0 * * * *', // Hourly by default
+  ADMIN_DEFAULT_EMAIL: process.env.ADMIN_DEFAULT_EMAIL || 'admin@pizzaverse.local',
+  ADMIN_DEFAULT_PASSWORD: process.env.ADMIN_DEFAULT_PASSWORD || 'AdminMasterPass2026!',
 };
 
 // Validate critical variables in production

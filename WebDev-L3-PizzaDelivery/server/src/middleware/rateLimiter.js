@@ -1,9 +1,12 @@
 import rateLimit from 'express-rate-limit';
+import { env } from '../config/env.js';
+
+const isDev = env.NODE_ENV !== 'production';
 
 // Standard rate limiter for general auth endpoints (login, register)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // Limit each IP to 30 requests per windowMs
+  max: isDev ? 1000 : 30, // Limit each IP to 30 in production, relaxed in dev
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   message: {
@@ -15,7 +18,7 @@ export const authLimiter = rateLimit({
 // Stricter rate limiter for sensitive endpoints (forgot-password, resend-verification)
 export const sensitiveActionLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per windowMs
+  max: isDev ? 500 : 5, // Stricter in production, relaxed in dev
   standardHeaders: true,
   legacyHeaders: false,
   message: {

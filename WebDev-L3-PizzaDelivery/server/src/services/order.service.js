@@ -10,6 +10,7 @@ import {
 } from '../utils/pricing.js';
 import RazorpayService from './razorpay.service.js';
 import InventoryService from './inventory.service.js';
+import { emitOrderStatusUpdate, emitNewOrder } from '../socket/index.js';
 
 export const OrderService = {
   /**
@@ -288,6 +289,10 @@ export const OrderService = {
       console.warn('[OrderService] Could not clear cart after order payment:', err.message);
     }
 
+    // Emit real-time notifications
+    emitOrderStatusUpdate(order, { reason: 'Payment verified via Razorpay test mode' });
+    emitNewOrder(order);
+
     return {
       success: true,
       alreadyProcessed: false,
@@ -335,6 +340,9 @@ export const OrderService = {
     await InventoryService.releaseStockForOrder(order, reason);
 
     await order.save();
+
+    // Emit real-time status update for customer & admin
+    emitOrderStatusUpdate(order, { reason });
 
     return {
       success: true,
