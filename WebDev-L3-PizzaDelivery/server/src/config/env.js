@@ -25,6 +25,10 @@ export const env = {
   SMTP_PASS: process.env.SMTP_PASS || '',
   EMAIL_FROM: process.env.EMAIL_FROM || 'PizzaVerse <noreply@pizzaverse.local>',
   EMAIL_SERVICE: process.env.EMAIL_SERVICE || 'ethereal', // 'ethereal', 'smtp', or 'console'
+  // Razorpay Test-Mode Configuration
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || 'rzp_test_PVTestKey2026',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || 'pv_sec_test_SecretKey2026',
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || 'pv_whsec_test_WebhookKey2026',
 };
 
 // Validate critical variables in production

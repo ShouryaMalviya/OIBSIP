@@ -295,7 +295,7 @@ export const CartDrawer = () => {
                   iconPosition="right"
                   onClick={() => {
                     closeDrawer();
-                    navigate('/cart');
+                    navigate('/checkout');
                   }}
                 >
                   Checkout

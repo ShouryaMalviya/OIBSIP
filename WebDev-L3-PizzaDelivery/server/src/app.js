@@ -36,13 +36,20 @@ app.use(
     },
     credentials: true, // Allow cookies to be sent across origins
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Cart-Token', 'X-Razorpay-Signature'],
   })
 );
 
-// Body parsing with safe size limits
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// Body parsing with safe size limits and rawBody retention for webhook signature verification
+app.use(
+  express.json({
+    limit: '50kb',
+    verify: (req, res, buf) => {
+      req.rawBody = buf.toString();
+    },
+  })
+);
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
 
 // Cookie parser for secure HTTP-only auth cookies
 app.use(cookieParser(env.COOKIE_SECRET));

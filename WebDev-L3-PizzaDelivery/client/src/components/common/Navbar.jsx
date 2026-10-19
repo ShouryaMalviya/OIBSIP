@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Sparkles,
   ShoppingBag,
+  Receipt,
 } from 'lucide-react';
 import Button from './Button';
 import Badge from './Badge';
@@ -145,6 +146,14 @@ export const Navbar = () => {
                           <span>My Account Profile</span>
                         </Link>
                         <Link
+                          to="/orders"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#00804C] transition-colors"
+                        >
+                          <Receipt className="w-4 h-4 text-slate-400" />
+                          <span>My Orders</span>
+                        </Link>
+                        <Link
                           to="/cart"
                           onClick={() => setUserDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#00804C] transition-colors"
@@ -251,11 +260,11 @@ export const Navbar = () => {
                   <p className="text-sm font-bold text-white">{user?.name}</p>
                   <p className="text-xs text-white/70">{user?.email}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <Button
                     variant="outlineWhite"
                     size="sm"
-                    className="w-full"
+                    className="w-full text-xs"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       navigate('/profile');
@@ -264,9 +273,20 @@ export const Navbar = () => {
                     Profile
                   </Button>
                   <Button
+                    variant="outlineWhite"
+                    size="sm"
+                    className="w-full text-xs"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate('/orders');
+                    }}
+                  >
+                    Orders
+                  </Button>
+                  <Button
                     variant="danger"
                     size="sm"
-                    className="w-full"
+                    className="w-full text-xs"
                     onClick={handleLogout}
                   >
                     Sign Out

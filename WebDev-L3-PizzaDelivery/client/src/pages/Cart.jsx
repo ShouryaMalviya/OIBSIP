@@ -323,14 +323,15 @@ export const Cart = () => {
                 className="w-full shadow-lg"
                 icon={ArrowRight}
                 iconPosition="right"
+                disabled={hasUnavailableItems}
                 onClick={() => {
-                  alert('Part 2 Complete! In Part 3, this proceeds to live Order Creation, Inventory Reservation & Razorpay Checkout.');
+                  navigate('/checkout');
                 }}
               >
                 Proceed to Checkout
               </Button>
               <p className="text-[11px] text-center text-slate-400">
-                Part 3 Payment Integration & Order Summary contract ready
+                Secure 256-bit Razorpay TEST-MODE Payment Gateway
               </p>
             </div>
 

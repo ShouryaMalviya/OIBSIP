@@ -13,6 +13,9 @@ import VerifyEmail from '../pages/VerifyEmail';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Profile';
+import Checkout from '../pages/Checkout';
+import OrderConfirmation from '../pages/OrderConfirmation';
+import Orders from '../pages/Orders';
 import NotFound from '../pages/NotFound';
 
 export const AppRoutes = () => {
@@ -23,6 +26,9 @@ export const AppRoutes = () => {
         <Route path="/menu" element={<Menu />} />
         <Route path="/builder" element={<Builder />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+        <Route path="/orders" element={<Orders />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
